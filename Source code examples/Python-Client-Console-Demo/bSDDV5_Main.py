@@ -90,6 +90,8 @@ Get_Classes_Linked_To_IFC() #Search classes linked to an IFC Entity in a domain
 Get_Classification_Properties() # Get the properties for a given classification
 '''
 
-NbRes, Response, request_status = bsdd.get_Material_Details("http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/AL--", "", False, False)
+# Debuggin newly implemented classes:
+#NbRes, Response, request_status = bsdd.get_Material_Details("http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/AL--", "", False, False)
+#NbRes, Response, request_status = bsdd.get_List_Material_Domain("http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1", "", "", False)
 
 print(Response)
