@@ -22,6 +22,7 @@ Resource_ReferenceDocument =  "ReferenceDocument/v1"
 Resource_Unit = "Unit/v1"
 Resource_DomainClassificationTree = "Domain/v2/Classifications"
 Resource_TextSearch_Open = 'TextSearchListOpen/v5'
+Resource_Material_Details = 'Material/v1'
 
 class TObject():
     name = ''
@@ -619,6 +620,47 @@ class TPostman():
         True
 
       return NbRes, Response, request_status
+
+    #----------------------------------------------------------------------------------------------------
+    # Make a search about materials details on bSDD  (CUSTOM MADE) - /api/Material/v1: 
+    #----------------------------------------------------------------------------------------------------
+
+    def get_Material_Details(self, _namespaceURI, _languageCode, _includeChildMaterialReferences, _SaveResult):
+      # params of the request
+      payload = dict()
+      payload["namespaceURI"] = _namespaceURI #A list of strings
+      payload["languagheCode"] = _languageCode #It is a string
+      payload["includeChildMaterialReferences"] = _includeChildMaterialReferences #A list of strings
+      
+      Response, request_status = self.get(Resource_Material_Details, payload)
+      
+      #TODO: Implement NbRes for this method
+      #NbRes = Response["numberOfClassificationsFound"]
+      NbRes=1
+      '''
+      for item in Response['domains']: #in this case we should have just 1 !
+        ReadDomain = self.GetDomainFromURI(item['namespaceUri']) 
+        for item2 in item["classifications"]:
+          NewClass = TClassification()
+          NewClass.FillValuesFromJSON(item2)
+          ReadDomain.Classes.append(NewClass)
+          #If details are required, a request is launched for each one
+          if _Get_Details:
+                payloadClass = dict()
+                payloadClass["namespaceUri"] = NewClass.namespaceUri
+                payloadClass["languageCode"] = _LanguageCode
+                payloadClass["includeChildClassificationReferences"] = False #we don't ask for the hierarchy we just want properties
+                mResponse = self.get(Resource_Classification, payloadClass)
+                NewClass.Load_Details(mResponse)
+      '''
+      if _SaveResult:
+        #TODO: Need to implement a way to save the Response data
+        #Save the classes informations to a csv    
+        #ReadDomain.SaveToCSV();
+        True
+
+      return NbRes, Response, request_status
+
 
 
     #----------------------------------------------------------------------------------------------------

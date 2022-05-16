@@ -81,10 +81,15 @@ def Get_Classification_Properties():
 #-------------- Uncomment calls as needed
 
 Login()
+
+'''
 #Get_Countries()
 Get_Domains()
 #Get_Classes_For_Domain() #Search all classes for a domain
 Get_Classes_Linked_To_IFC() #Search classes linked to an IFC Entity in a domain
 Get_Classification_Properties() # Get the properties for a given classification
+'''
 
+NbRes, Response, request_status = bsdd.get_Material_Details("http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/AL--", "", False, False)
 
+print(Response)
