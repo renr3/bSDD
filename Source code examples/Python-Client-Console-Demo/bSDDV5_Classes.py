@@ -2,16 +2,26 @@ import csv
 import requests
 import requests.auth
 
+#Custom libraries
+import json
+
 #API_Endpoint = "https://bsdd-prototype.azure-api.net/api/" 
 API_EndPoint = 'https://test.bsdd.buildingsmart.org/api/';
 
 # API ressources
 Resource_Domains = "Domain/v2"
-Resource_Classification = "Classification/v2"
+Resource_Classification = "Classification/v3"
 Resource_Country = "Country/v1"
 Resource_Search_Open = 'SearchListOpen/v2' #Unsecured
 Resource_Search_Secured = 'SearchList/v2' #secured
 
+# Custom made Resources
+Resource_ExportFile = "RequestExportFile/preview"
+Resource_Languages = "Language/v1"
+Resource_ReferenceDocument =  "ReferenceDocument/v1"
+Resource_Unit = "Unit/v1"
+Resource_DomainClassificationTree = "Domain/v2/Classifications"
+Resource_TextSearch_Open = 'TextSearchListOpen/v5'
 
 class TObject():
     name = ''
@@ -46,9 +56,12 @@ class TCountry(TObject):
 #  Classification      #   
 #----------------------#        
 class TClassification(TObject):    
-    definition = ''
-    IFCLinks = []
-    Properties = []
+    def __init__(self): #Added constructor to expand available properties for this object
+      self.definition = ''
+      self.IFCLinks = []
+      self.Properties = []
+      self.namespaceUri = []
+      self.uid = []
 
     # Read the values from the JSON response    
     def FillValuesFromJSON(self, _content):
@@ -69,6 +82,13 @@ class TClassification(TObject):
                       NewProperty.FillValuesFromJSON(item)                      
                       self.Properties.append(NewProperty)
 
+          # Properties attached to the classification
+          if "namespaceUri" in _content:
+            for item in _content["namespaceUri"]:                                  
+              NewProperty = TProperty()
+              NewProperty.FillValuesFromJSON(item)                      
+              self.Properties.append(NewProperty)
+
     # Save properties list  values  of the class into a csv file
     def SaveToCSV(self, _Name):
         with open(_Name + '_Properties.csv' , 'w+') as csvfile:
@@ -82,9 +102,10 @@ class TClassification(TObject):
 #  Property            #   
 #----------------------#        
 class TProperty(TObject):    
-    definition = ""
-    domain = ""
-    dataType = ""
+    def __init__(self):  #Added constructor for future expansion of available properties for this object
+      self.definition = ""
+      self.domain = ""
+      self.dataType = ""
 
     # Read the values from the JSON response    
     def FillValuesFromJSON(self, _content):
@@ -98,14 +119,15 @@ class TProperty(TObject):
 #  Domain              #   
 #----------------------#        
 class TDomain(TObject):
-    version = ''
-    organizationNameOwner = ''
-    defaultLanguageCode = ''
-    license = ''
-    licenseUrl = ''
-    qualityAssuranceProcedure = ''
-    qualityAssuranceProcedureUrl = ''
-    Classes = []
+    def __init__(self): #Added constructor for future expansion of available properties for this object
+      self.version = ''
+      self.organizationNameOwner = ''
+      self.defaultLanguageCode = ''
+      self.license = ''
+      self.licenseUrl = ''
+      self.qualityAssuranceProcedure = ''
+      self.qualityAssuranceProcedureUrl = ''
+      self.Classes = []
 
     # Read the values from the JSON response
     def FillValuesFromJSON(self, _content):
@@ -127,7 +149,53 @@ class TDomain(TObject):
             writer.writeheader()
             for item in self.Classes:
                 writer.writerow({'Name' : item.name, 'URI' : item.namespaceUri, 'Definition' : item.definition})
-        
+    
+    # Dump data into json format, for visualization and saving in a GUI or file
+    def toJSON(self):
+      return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=1)
+
+#CUSTOM MADE CLASSES: These classes were created to accomodate all the available requests from the RESTful API
+#----------------------#        
+#  Language            #   
+#----------------------#        
+class TLanguage(TObject):
+  def __init__(self):   
+    self.isoCode = ''
+    
+  def FillValuesFromJSON(self, _content):
+      self.name = self.ReadVal(_content, 'name')
+      self.namespaceUri = self.ReadVal(_content, 'namespaceUri')
+      self.isoCode = self.ReadVal(_content, 'isoCode')
+
+#----------------------#        
+#  ReferenceDocuments  #   
+#----------------------#        
+class TReferenceDocument(TObject):
+  def __init__(self):   
+    self.title = ''
+    self.date = ''
+
+  def FillValuesFromJSON(self, _content):
+    self.name = self.ReadVal(_content, 'name')
+    self.namespaceUri = self.ReadVal(_content, 'namespaceUri')
+    self.title = self.ReadVal(_content, 'title')
+    self.date = self.ReadVal(_content, 'date')        
+
+#----------------------#        
+#  Unit                #   
+#----------------------#        
+class TUnit(TObject):
+  def __init__(self):   
+    self.code = ''
+    self.symbol = ''
+
+  def FillValuesFromJSON(self, _content):
+    self.name = self.ReadVal(_content, 'name')
+    self.namespaceUri = self.ReadVal(_content, 'namespaceUri')
+    self.code = self.ReadVal(_content, 'code')
+    self.symbol = self.ReadVal(_content, 'symbol') 
+
+
 #------------------------------------------------------------------------#
 #        This class contains                                             # 
 #           - authorization                                              #
@@ -137,11 +205,16 @@ class TDomain(TObject):
 #------------------------------------------------------------------------#
 
 class TPostman():
-    
-    Domains = [] # Used to store domains received from an API call
-    Countries = [] # used to store the list of countries received from an API call
-    Token = None # used to store the token received from an authorization call
-    #----------------------------------------------------------------------------------------------------
+    def __init__(self): #Added constructor for future expansion of available properties for this object
+      self.Domains = [] # Used to store domains received from an API call
+      self.Countries = [] # used to store the list of countries received from an API call
+      self.Token = None # used to store the token received from an authorization call
+
+      #CUSTOM MADE HOLDERS
+      self.Languages = [] # Used to store list of languages available in bSDD received from an API call
+      self.ReferenceDocuments = [] # Used to store list of reference documents available in bSDD received from an API call
+      self.Units = [] # Used to store list of units available in bSDD received from an API call
+      #----------------------------------------------------------------------------------------------------
 
     #----------------------------------------------------------------------------------------------------
     # get an authorization token - will open a web browser for the credentials
@@ -158,9 +231,17 @@ class TPostman():
       
       app = PublicClientApplication( bSDD_ClientID, authority = bSDD_authority) #need localhost redirection on azure portal for the client ID
       flow = app.initiate_auth_code_flow(scopes=[bSDD_Scope])
-      self.Token = app.acquire_token_interactive(scopes=[bSDD_Scope])
+      
+      #First try to see if there are accounts in cache. If not or an error is received, get token interactively through browser
+      #By standard, cache is only maintaned during a given Python session (runtime session of the code), since it is store in-memory (not persistent). In order to build a persistent version, the app instance constructor PublicClientApplication must receive a cache, that may be created manually with the SerializableTokenCache() class. See https://msal-python.readthedocs.io/en/latest/#msal.SerializableTokenCache and https://msal-python.readthedocs.io/en/latest/ for more information on that.
+      result = None
+      accounts = app.get_accounts()
+      if accounts:
+        result = app.acquire_token_silent(scopes=[bSDD_Scope], account=accounts[0])
+      if not result:
+        self.Token = app.acquire_token_interactive(scopes=[bSDD_Scope])
 
-      print('logged in')
+        print('logged in')
      
     #----------------------------------------------------------------------------------------------------
     # Format the header of a query 
@@ -195,15 +276,16 @@ class TPostman():
       #sometimes it is needed to be able to access the header of the response
       self.header = mResponse.headers
       
-      return mResponse.json()
+      #Status code is also passed secondarily for optional error handling or visualization on the GUI
+      return mResponse.json(), mResponse.status_code
 
     #----------------------------------------------------------------------------------------------------
-    # Get available countries
+    # Get available countries - /api/Country/v1: 
     #----------------------------------------------------------------------------------------------------
 
-    def get_Countries(self):
+    def get_Countries(self, _SaveResult):
 
-      Response = self.get(Resource_Country, "")
+      Response, request_status = self.get(Resource_Country, "")
       #Browse the results
       NbRes = 0
 
@@ -212,13 +294,19 @@ class TPostman():
         Country.FillValuesFromJSON(item)
         self.Countries.append(Country)
 
+      if _SaveResult:
+        True
+        #TODO: Implement and test saving this information in a CSV file
+        #Save domain list to a csv file
+        #self.Save_Domains_To_CSV()
+
     #----------------------------------------------------------------------------------------------------
-    # Get available domains
+    # Get available domains - /api/Domain/v2: 
     #----------------------------------------------------------------------------------------------------
     
     def get_Domains(self, _SaveResult):
       
-      Response = self.get(Resource_Domains, "")
+      Response, request_status = self.get(Resource_Domains, "")
       #Browse the results
       NbRes = 0
       
@@ -235,7 +323,7 @@ class TPostman():
       return NbRes
 
     #----------------------------------------------------------------------------------------------------
-    # Get Classes of domains
+    # Get Classes of domains - /api/SearchList/v2
     #----------------------------------------------------------------------------------------------------
 
     def get_Domain_Classes(self, _DomainURI, _LanguageCode, _SaveResult, _Get_Details):
@@ -246,11 +334,11 @@ class TPostman():
       #Language code for the request ; EN for Internation English
       payload["LanguageCode"] = _LanguageCode
       
-      Response = self.get(Resource_Search_Secured, payload)
+      Response, request_status = self.get(Resource_Search_Secured, payload)
 
       NbRes = Response["numberOfClassificationsFound"]
       
-      for item in Response['domains']: #in this case we should have just 1 !
+      for item in Response['domains']: #in this case we should have just 1 ! (Since we informed a URI from a specific domain)
         ReadDomain = self.GetDomainFromURI(item['namespaceUri']) 
         for item2 in item["classifications"]:
           NewClass = TClassification()
@@ -273,7 +361,7 @@ class TPostman():
       return NbRes
 
     #----------------------------------------------------------------------------------------------------
-    # Retrieve the properties of a classification
+    # Retrieve the properties of a classification (i.e. retrieve all properties of a given definition) - /api/Classification/v3
     #----------------------------------------------------------------------------------------------------
 
     def Get_Classification_Properties(self, _ClassificationURI, _LanguageCode, _SaveResult, _ClassificationName = None): #Classification name, optional, just to nicely name the excel export
@@ -281,7 +369,7 @@ class TPostman():
        payloadClass["namespaceUri"] = _ClassificationURI
        payloadClass["languageCode"] = _LanguageCode
        payloadClass["includeChildClassificationReferences"] = False #we don't ask for the hierarchy we just want properties
-       mResponse = self.get(Resource_Classification, payloadClass)
+       mResponse, request_status = self.get(Resource_Classification, payloadClass)
 
        mClassification = TClassification()
 
@@ -305,9 +393,8 @@ class TPostman():
 
        return NbRes
           
-
     #----------------------------------------------------------------------------------------------------
-    # Retrieve a the classes of a domain linked to an IFC Entity 
+    # Retrieve a the classes of a domain linked to an IFC Entity - /api/SearchListOpen/v2
     #----------------------------------------------------------------------------------------------------
 
     def get_Linked_Classes(self, _DomainURI, _LanguageCode, _IFCEntity, _SaveResult, _Get_Details):
@@ -318,7 +405,7 @@ class TPostman():
       payload["LanguageCode"] = _LanguageCode
       payload["RelatedIfcEntity"] = _IFCEntity
       
-      Response = self.get(Resource_Search_Open, payload)
+      Response, request_status = self.get(Resource_Search_Open, payload)
       
       NbRes = Response["numberOfClassificationsFound"]
 
@@ -370,3 +457,188 @@ class TPostman():
         writer.writeheader()
         for item in self.Domains:
           writer.writerow({'Name' : item.name, 'URI' : item.namespaceUri})
+
+    #----------------------------------------------------------------------------------------------------
+    # Get available Languages (CUSTOM MADE) - /api/Language/v1: 
+    #----------------------------------------------------------------------------------------------------
+    
+    def get_Languages(self, _SaveResult):
+      
+      Response, request_status = self.get(Resource_Languages, "")
+      #Browse the results
+      NbRes = 0
+      
+      for item in Response:
+        Language = TLanguage()
+        Language.FillValuesFromJSON(item)
+        self.Languages.append(Language)
+        NbRes = NbRes + 1
+      
+      if _SaveResult:
+        True
+        #TODO: Implement a way to save this information in a CSV file
+        #Save domain list to a csv file
+        #self.Save_Domains_To_CSV()
+
+      return NbRes  
+
+    #----------------------------------------------------------------------------------------------------
+    # Get available Reference Documents (CUSTOM MADE) - /api/ReferenceDocument/v1: 
+    #----------------------------------------------------------------------------------------------------
+    
+    def get_ReferenceDocuments(self, _SaveResult):
+      
+      Response, request_status = self.get(Resource_ReferenceDocument, "")
+      #Browse the results
+      NbRes = 0
+      
+      for item in Response:
+        ReferenceDocument = TReferenceDocument()
+        ReferenceDocument.FillValuesFromJSON(item)
+        self.ReferenceDocuments.append(ReferenceDocument)
+        NbRes = NbRes + 1
+      
+      if _SaveResult:
+        True
+        #TODO: Implement a way to save this information in a CSV file
+        #Save domain list to a csv file
+        #self.Save_Domains_To_CSV()
+
+      #Return number of results, i.e., number of Reference Documents available in bSDD
+      return NbRes  
+
+    #----------------------------------------------------------------------------------------------------
+    # Get available Units (CUSTOM MADE) - /api/Unit/v1
+    #----------------------------------------------------------------------------------------------------
+    
+    def get_Units(self, _SaveResult):
+      
+      Response, request_status = self.get(Resource_Unit, "")
+      #Browse the results
+      NbRes = 0
+      
+      for item in Response:
+        Unit = TUnit()
+        Unit.FillValuesFromJSON(item)
+        self.Units.append(Unit)
+        NbRes = NbRes + 1
+      
+      if _SaveResult:
+        True
+        #TODO: Implement a way to save this information in a CSV file
+        #Save domain list to a csv file
+        #self.Save_Domains_To_CSV()
+
+      #Return number of results, i.e., number of Units available in bSDD
+      return NbRes  
+
+    #----------------------------------------------------------------------------------------------------
+    # Get Domain with a classification tree (CUSTOM MADE) - /api/Domain/v2/Classifications: 
+    #----------------------------------------------------------------------------------------------------
+
+    def get_Domain_Classes_Tree(self, _DomainURI, _useNestedClassifications, _SaveResult):
+      #This is the GET "/api/Domain/v2/Classifications - Get Domain with the classification tree"
+      #TODO: Implement verification of response status
+
+      #params of the request
+      payload = dict()
+      payload["namespaceUri"] = _DomainURI
+      payload["useNestedClassifications"] = _useNestedClassifications
+      
+      # Response = self.get(Resource_Search_Secured, payload)
+      Response, request_status = self.get(Resource_DomainClassificationTree, payload)
+
+      #TODO: find a way to compute classification number from the JSON file received
+      #NbRes stores the amount of classifications retrieved in the response
+      #NbRes = len(Response['classifications'])
+      NbRes=1
+
+      #Unwrapping the Response and saving to the global bsdd variable of the script
+      #This is useful if we are going to cache information to avoid lots of retrievals
+      #TODO: check the method contract and make sure everything in Response is properly unwrapped. As of now, we are just passing Response to the GUI, to show, and will not update bsdd variable.
+
+      #From the list of domains already retrieved when initializing the API with the method "self.get_Domains()", retrieve the general structure of the domain, so we can populate it with data from the classifications retrieved, by having access to the field ".Classes" that is part of the "Domain" data structure.
+      ReadDomain = self.GetDomainFromURI(_DomainURI)
+      '''
+      for item in Response['classifications']: #iterate through each classification found in the domain:
+        NewClass = TClassification()
+        NewClass.FillValuesFromJSON(item)
+        #If details are required, a request is launched for each class
+        if  _useNestedClassifications:
+          payloadClass = dict()
+          payloadClass["namespaceUri"] = NewClass.namespaceUri
+          payloadClass["includeChildClassificationReferences"] = True #we don't ask for the hierarchy we just want properties
+          mResponse = self.get(Resource_Classification, payloadClass)
+          NewClass.Load_Details(mResponse)
+        ReadDomain.Classes.append(NewClass)
+      '''
+      if _SaveResult:
+        #Save the classes informations to a csv    
+        #ReadDomain.SaveToCSV();
+        #TODO: implement a way to save results here
+        True
+
+      return NbRes, Response, request_status
+
+    #----------------------------------------------------------------------------------------------------
+    # Make an Open Search on bSDD  (CUSTOM MADE) - /api/TextSearchListOpen/v5: 
+    #----------------------------------------------------------------------------------------------------
+
+    def get_TextOpen_Search(self, _SearchText, _TypeFilter, _FilteringDomainUris, _SaveResult):
+      # params of the request
+      payload = dict()
+      payload["SearchText"] = _SearchText #A list of strings
+      payload["TypeFilter"] = _TypeFilter #It is a string
+      payload["DomainNamespaceUris"] = _FilteringDomainUris #A list of strings
+      
+      Response, request_status = self.get(Resource_TextSearch_Open, payload)
+      
+      #TODO: Implement NbRes for this method
+      #NbRes = Response["numberOfClassificationsFound"]
+      NbRes=1
+      '''
+      for item in Response['domains']: #in this case we should have just 1 !
+        ReadDomain = self.GetDomainFromURI(item['namespaceUri']) 
+        for item2 in item["classifications"]:
+          NewClass = TClassification()
+          NewClass.FillValuesFromJSON(item2)
+          ReadDomain.Classes.append(NewClass)
+          #If details are required, a request is launched for each one
+          if _Get_Details:
+                payloadClass = dict()
+                payloadClass["namespaceUri"] = NewClass.namespaceUri
+                payloadClass["languageCode"] = _LanguageCode
+                payloadClass["includeChildClassificationReferences"] = False #we don't ask for the hierarchy we just want properties
+                mResponse = self.get(Resource_Classification, payloadClass)
+                NewClass.Load_Details(mResponse)
+      '''
+      if _SaveResult:
+        #TODO: Need to implement a way to save the Response data
+        #Save the classes informations to a csv    
+        #ReadDomain.SaveToCSV();
+        True
+
+      return NbRes, Response, request_status
+
+
+    #----------------------------------------------------------------------------------------------------
+    #  Request a file with an export of a domain (CUSTOM MADE) - /api/RequestExportFile/preview: 
+    #----------------------------------------------------------------------------------------------------
+    
+    def RequestExportOfADomain(self, _SaveResult):
+      
+      Response = self.get(Resource_ExportFile, "")
+      #Browse the results
+      NbRes = 0
+      
+      for item in Response:
+        Domain = TDomain()
+        Domain.FillValuesFromJSON(item)
+        self.Domains.append(Domain)
+        NbRes = NbRes + 1
+      
+      if _SaveResult:
+        #Save domain list to a csv file
+        self.Save_Domains_To_CSV()
+
+      return NbRes

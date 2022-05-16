@@ -1,0 +1,55 @@
+Name;URI
+IFC;http://identifier.buildingsmart.org/uri/buildingsmart/ifc-4.3
+PDT;http://identifier.buildingsmart.org/uri/pdt/pdt-1.0
+NL-SfB 2005;http://identifier.buildingsmart.org/uri/nlsfb/nlsfb2005-2.2
+UniversalTypes;http://identifier.buildingsmart.org/uri/promaterial/universaltypes-1.0
+GSA Space Entities;http://identifier.buildingsmart.org/uri/gsa/gsaspace-23
+Swedish materials;http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1
+Uniclass 2015;http://identifier.buildingsmart.org/uri/nbs/uniclass2015-1
+Omniclass;http://identifier.buildingsmart.org/uri/csi/omniclass-1
+Planbim;http://identifier.buildingsmart.org/uri/planbim/planbim-1
+Arge;http://identifier.buildingsmart.org/uri/efalbhm/arge-0.1
+CCI Construction;http://identifier.buildingsmart.org/uri/molio/cciconstruction-1.0
+DTDL;http://identifier.buildingsmart.org/uri/dtc/dtdl-1
+BIM Lib RU temp;http://identifier.buildingsmart.org/uri/bimlib/bimlib-ru-temp-1
+VHF;http://identifier.buildingsmart.org/uri/fvhf/vhf-0.002
+MINnD Bridge dictionary;http://identifier.buildingsmart.org/uri/buildingsmart-fr/BRIDGE-MINnD-1.0
+OTL Amsterdam;http://otl.amsterdam.nl/
+jacic;http://identifier.buildingsmart.org/uri/jacic/jacic-0.0
+JACIC classification;http://identifier.buildingsmart.org/uri/jacic/jacic-1.0
+JACIC classification;http://identifier.buildingsmart.org/uri/jacic/jacic-1.1
+Hb V440;http://rdf.vegdata.no/V440/v440-owl
+Classificazione RFI;http://identifier.buildingsmart.org/uri/engisis/RFI-0.1
+German Product Extensions (BSDBP);http://identifier.buildingsmart.org/uri/buildingsmart-de/bsdbp-1
+MINnD Drainage;http://identifier.buildingsmart.org/uri/buildingsmart-fr/MINnD-1.0
+UCM-Demo;http://identifier.buildingsmart.org/uri/buildingsmart-ch/UCM-CH-Demo-1.0
+Test domain;http://identifier.buildingsmart.org/uri/buildingsmart/demo-2-1.0
+Transsmart;http://identifier.buildingsmart.org/uri/growingcircle/transsmart-0.1
+IFC Rail;http://identifier.buildingsmart.org/uri/ifcrail/ifcrail-0.1
+BIMeta;http://identifier.buildingsmart.org/uri/bimeta/bimeta-0.1
+BIM2FIELD2BIM;http://identifier.buildingsmart.org/uri/ifcrail/ifcrail-1.0
+VDMA Pumps + Systems;http://identifier.buildingsmart.org/uri/VDMAPumpsSystems/VDMAPumpsSystems-0.1
+MTR;http://identifier.buildingsmart.org/uri/MTR/MTR-1
+Expérimentation PC numérique;http://identifier.buildingsmart.org/uri/bimdata/bimdata-1.0
+Test domain;http://identifier.buildingsmart.org/uri/buildingsmart/demo-2-1.1
+MINnD Pavement;http://identifier.buildingsmart.org/uri/buildingsmart-fr/MINnD-Pavement-1.0
+MINnD Tunnel;http://identifier.buildingsmart.org/uri/buildingsmart-fr/MINnD-Tunnel-1.0
+Oil & Gas Submarine Installations;http://identifier.buildingsmart.org/uri/certi/ogsub-0.1
+FTIA;http://identifier.buildingsmart.org/uri/FTIA/FTIA-1.0
+bSDD-Demo Materials;http://identifier.buildingsmart.org/uri/buildingsmart/bSDD-DEMO-mat-1.0
+Modèles d'objets numériques bSF;http://identifier.buildingsmart.org/uri/ATALANE/REX-OBJ-1.0
+NAA.K.T.;http://identifier.buildingsmart.org/uri/bimloket/naakt-0.1
+ACCA test domain;http://identifier.buildingsmart.org/uri/acca/ACCAtest-0.1
+MINnD Earthwork;http://identifier.buildingsmart.org/uri/buildingsmart-fr/MINnD-Earthwork-1.0
+VolkerWessels Bouw & vastgoed;http://identifier.buildingsmart.org/uri/digibase/volkerwesselsbv-0.1
+ArcDox;http://identifier.buildingsmart.org/uri/ArcDox/ArcDox-1.0
+BBRI;http://identifier.buildingsmart.org/uri/BBRI/BBRI-0.1
+Bauteiltypen nach DIN 276+x (geprüft);http://identifier.buildingsmart.org/uri/bimeta/bimeta-1.0
+CCTB;http://identifier.buildingsmart.org/uri/BBRI/CCTB-2020
+test;http://identifier.buildingsmart.org/uri/ethz/hosszu-0.1
+MSSK;http://identifier.buildingsmart.org/uri/mssk/mssk-0.1
+EPD Indicators and modules;http://identifier.buildingsmart.org/uri/LCA/LCA-1.0
+VMSW;http://identifier.buildingsmart.org/uri/BBRI/VMSW-2020
+VMSW;http://identifier.buildingsmart.org/uri/BBRI/VMSW-2015
+DIN 276+;http://identifier.buildingsmart.org/uri/dreso/din276plus-1.0
+IFC Airport;http://identifier.buildingsmart.org/uri/ifcairport/ifcairport-1.0
