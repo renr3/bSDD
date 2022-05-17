@@ -912,6 +912,18 @@
               <height>28</height>
              </size>
             </property>
+            <property name="inputMask">
+             <string/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="echoMode">
+             <enum>QLineEdit::NoEcho</enum>
+            </property>
+            <property name="placeholderText">
+             <string/>
+            </property>
            </widget>
           </item>
           <item row="6" column="3">

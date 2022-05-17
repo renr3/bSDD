@@ -170,15 +170,31 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: If success (implement this verification), get all general information
         self.getGeneralInformation()
         #TODO: If success connection, unlock all search buttons. They must be locked at first
+        #Initialize all comboBoxes and LineEdits with data content retrieved from bSDD database
+        self.initializeComboBoxesLineEdits()
 
+    #Initialize all comboBoxes after connection to bSDD has been successfully stablished
+    def initializeComboBoxesLineEdits(self):
         #Populate all comboBoxes and fields with relevant information
-        #GetDomain tab
+        #GetDomain tab      
         self.GetDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
         self.GetDomain_DataStructure_comboBox.addItems(["true","false"])
 
         #OpenSearch tab
         self.renderCheckableComboBoxInOpenSearchTab([item.namespaceUri for item in bsdd.Domains])  
         self.OpenSearch_Filter_comboBox.addItems(["All","Properties","Classifications"])
+        self.OpenSearch_SearchTextString_lineEdit.setPlaceholderText("ex.: window. Minimum 3 characters. Case and accent insensitive")
+
+        #OpenSearchClassifications tab
+        self.OpenSearchClassifications_Filter_comboBox.setMaxVisibleItems(5)
+        self.OpenSearchClassifications_Filter_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.OpenSearchClassifications_Filter_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+        self.GetListMaterialDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
+        self.renderCheckableComboBoxInOpenSearchClassificationTab([item.namespaceUri for item in bsdd.Domains]) 
+        self.OpenSearchClassifications_SearchTextString_lineEdit_2.setPlaceholderText("ex.: window. Case and accent insensitive")
+        self.OpenSearchClassifications_SearchTextString_lineEdit.setPlaceholderText("ex.: IfcDoor. The official IFC entity name to filter on (case sensitive) ")
 
         #GetClasificationDetails tab
         self.GetClassificationDetails_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
@@ -195,6 +211,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+        self.GetListMaterialDomain_SearchTextString_lineEdit.setPlaceholderText("ex.: aluminum. Case and accent insensitive")
 
         #GetMaterialDetails tab
         self.GetMaterialDetails_DataStructure_comboBox.setMaxVisibleItems(5)
@@ -203,6 +220,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetMaterialDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
         self.GetMaterialDetails_DataStructure_comboBox_2.addItems(["true", "false"])
+        self.GetListMaterialDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the material")
 
         #GetPropertyDetails tab
         self.GetPropertyDetails_DataStructure_comboBox.setMaxVisibleItems(5)
@@ -210,6 +228,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetPropertyDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+        self.GetPropertyDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: NamespaceURI of the property, e.g. http://identifier.buildingsmart.org/uri/buildingsmart/ifc-4.3/prop/AirConditioning")
 
         #GetPropertyValueDetails tab
         self.GetPropertyValueDetails_DataStructure_comboBox.setMaxVisibleItems(5)
@@ -217,20 +236,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetPropertyValueDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
-
-        #OpenSearchClassifications tab
-        self.OpenSearchClassifications_Filter_comboBox.setMaxVisibleItems(5)
-        self.OpenSearchClassifications_Filter_comboBox.setMaxCount(len(bsdd.Languages))
-        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
-        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
-        self.OpenSearchClassifications_Filter_comboBox.addItems([item.isoCode for item in bsdd.Languages])
-        self.GetListMaterialDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
-        self.renderCheckableComboBoxInOpenSearchClassificationTab([item.namespaceUri for item in bsdd.Domains]) 
-
-
-
-
-
+        self.GetPropertyValueDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the property value")
 
     #Signal that is called to get general information available on bSDD API
     def getGeneralInformation(self):
