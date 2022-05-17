@@ -34,6 +34,12 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.renderCheckableComboBoxInTab(self.OpenSearch_CheckComboBoxHolder_widget, ["teste","teste"])
         self.renderJSONTreeViewerInGetDomainTab(dict())
         self.renderJSONTreeViewerInOpenSearchTab(dict())
+        self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
+        self.renderJSONTreeViewerInGetClassificationDetailsTab(dict())
+        self.renderJSONTreeViewerInGetListMaterialDomainTab(dict())
+        self.renderJSONTreeViewerInGetMaterialDetailsTab(dict())
+        self.renderJSONTreeViewerInGetPropertyDetailsTab(dict())
+        self.renderJSONTreeViewerInGetPropertyValueDetailsTab(dict())
         self.renderCheckableComboBoxInOpenSearchTab(["No information retrieved yet"])
         self.renderCheckableComboBoxInOpenSearchClassificationTab(["No information retrieved yet"]) 
 
@@ -47,13 +53,15 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.checkRefDocs_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(bsdd.ReferenceDocuments, "Showing available Reference Documents in bSDD"))
         self.checkUnits_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(bsdd.Units, "Showing available Units in bSDD"))
 
-        # "Get a Domain" tab panel
+        # GetDomain tab buttons
         self.GetDomain_Search_pushButton.clicked.connect(lambda: self.searchButtonDomainTab())
         self.GetDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
 
-        # "Open search in all bSDD"
+        # OpenSearch tab buttons
         self.OpenSearch_Search_pushButton.clicked.connect(lambda: self.searchButtonOpenSearchTab())
+        self.OpenSearch_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.OpenSearch_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
     #Signal that is called when Search button on "Get a Domain" panel is clicked: it performs the querry specified
     def searchButtonDomainTab(self):
@@ -88,15 +96,16 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #result=bsdd.GetDomainFromURI(self.GetDomain_DomainURI_comboBox.currentText())
             if self.currentResponse[2]==200:
                 #200 is the HTML code for a successful query
-                self.GetDomain_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
-                self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.OpenSearch_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
                 self.renderJSONTreeViewerInOpenSearchTab(self.currentResponse[1])
             else:
-                self.GetDomain_QuerryStatusResult_label.setText("Status code unknown: Failure")
-                self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.OpenSearch_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchTab(dict())
 
-    #Render the JSON Tree Viewer in the Get Domain tab
+    ################################## Render JSON Tree Viewer in tabs
+    #Render the JSON Tree Viewer in the GetDomain tab
     def renderJSONTreeViewerInGetDomainTab(self, dataToBeDisplayed):
         try:
             self.JSONlayoutGetDomain.removeWidget(self.sub_widgetJSONTreeViewerInGetDomainTab)
@@ -111,7 +120,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sub_widgetJSONTreeViewerInGetDomainTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetDomain_JSONViewerHolder_widget)
             self.JSONlayoutGetDomain.addWidget(self.sub_widgetJSONTreeViewerInGetDomainTab)
 
-    #Render the JSON Tree Viewer in the Get Domain tab
+    #Render the JSON Tree Viewer in the OpenSearch tab
     def renderJSONTreeViewerInOpenSearchTab(self, dataToBeDisplayed):
         try:
             self.JSONlayoutOpenSearch.removeWidget(self.sub_widgetJSONTreeViewerInOpenSearchTab)
@@ -126,6 +135,97 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sub_widgetJSONTreeViewerInOpenSearchTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.OpenSearch_JSONViewerHolder_widget)
             self.JSONlayoutOpenSearch.addWidget(self.sub_widgetJSONTreeViewerInOpenSearchTab)
 
+    #Render the JSON Tree Viewer in the OpenSearchClassifications tab
+    def renderJSONTreeViewerInOpenSearchClassificationsTab(self, dataToBeDisplayed):
+        try:
+            self.JSONlayoutOpenSearchClassifications.removeWidget(self.sub_widgetJSONTreeViewerInOpenSearchClassificationsTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetJSONTreeViewerInOpenSearchClassificationsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.OpenSearchClassifications_JSONViewerHolder_widget)
+            self.JSONlayoutOpenSearchClassifications.addWidget(self.sub_widgetJSONTreeViewerInOpenSearchClassificationsTab)
+            self.sub_widgetJSONTreeViewerInOpenSearchClassificationsTab.show()
+        except:
+            self.JSONlayoutOpenSearchClassifications = QtWidgets.QHBoxLayout(self.OpenSearchClassifications_JSONViewerHolder_widget)
+            self.JSONlayoutOpenSearchClassifications.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetJSONTreeViewerInOpenSearchClassificationsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.OpenSearchClassifications_JSONViewerHolder_widget)
+            self.JSONlayoutOpenSearchClassifications.addWidget(self.sub_widgetJSONTreeViewerInOpenSearchClassificationsTab)
+
+    #Render the JSON Tree Viewer in the GetClassificationDetails tab
+    def renderJSONTreeViewerInGetClassificationDetailsTab(self, dataToBeDisplayed):
+        try:
+            self.JSONlayoutGetClassificationDetails.removeWidget(self.sub_widgetJSONTreeViewerInGetClassificationDetailsTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetJSONTreeViewerInGetClassificationDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetClassificationDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetClassificationDetails.addWidget(self.sub_widgetJSONTreeViewerInGetClassificationDetailsTab)
+            self.sub_widgetJSONTreeViewerInGetClassificationDetailsTab.show()
+        except:
+            self.JSONlayoutGetClassificationDetails = QtWidgets.QHBoxLayout(self.GetClassificationDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetClassificationDetails.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetJSONTreeViewerInGetClassificationDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetClassificationDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetClassificationDetails.addWidget(self.sub_widgetJSONTreeViewerInGetClassificationDetailsTab)
+
+    #Render the JSON Tree Viewer in the GetListMaterialDomain tab
+    def renderJSONTreeViewerInGetListMaterialDomainTab(self, dataToBeDisplayed):
+        try:
+            self.JSONlayoutGetListMaterialDomain.removeWidget(self.sub_widgetJSONTreeViewerInGetListMaterialDomainTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetJSONTreeViewerInGetListMaterialDomainTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetListMaterialDomain_JSONViewerHolder_widget)
+            self.JSONlayoutGetListMaterialDomain.addWidget(self.sub_widgetJSONTreeViewerInGetListMaterialDomainTab)
+            self.sub_widgetJSONTreeViewerInGetListMaterialDomainTab.show()
+        except:
+            self.JSONlayoutGetListMaterialDomain = QtWidgets.QHBoxLayout(self.GetListMaterialDomain_JSONViewerHolder_widget)
+            self.JSONlayoutGetListMaterialDomain.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetJSONTreeViewerInGetListMaterialDomainTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetListMaterialDomain_JSONViewerHolder_widget)
+            self.JSONlayoutGetListMaterialDomain.addWidget(self.sub_widgetJSONTreeViewerInGetListMaterialDomainTab)
+
+    #Render the JSON Tree Viewer in the GetMaterialDetails tab
+    def renderJSONTreeViewerInGetMaterialDetailsTab(self, dataToBeDisplayed):
+        try:
+            self.JSONlayoutGetMaterialDetails.removeWidget(self.sub_widgetJSONTreeViewerInGetMaterialDetailsTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetJSONTreeViewerInGetMaterialDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetMaterialDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetMaterialDetails.addWidget(self.sub_widgetJSONTreeViewerInGetMaterialDetailsTab)
+            self.sub_widgetJSONTreeViewerInGetMaterialDetailsTab.show()
+        except:
+            self.JSONlayoutGetMaterialDetails = QtWidgets.QHBoxLayout(self.GetMaterialDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetMaterialDetails.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetJSONTreeViewerInGetMaterialDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetMaterialDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetMaterialDetails.addWidget(self.sub_widgetJSONTreeViewerInGetMaterialDetailsTab)
+
+    #Render the JSON Tree Viewer in the GetPropertyDetails tab
+    def renderJSONTreeViewerInGetPropertyDetailsTab(self, dataToBeDisplayed):
+        try:
+            self.JSONlayoutGetPropertyDetails.removeWidget(self.sub_widgetJSONTreeViewerInGetPropertyDetailsTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetJSONTreeViewerInGetPropertyDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetPropertyDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetPropertyDetails.addWidget(self.sub_widgetJSONTreeViewerInGetPropertyDetailsTab)
+            self.sub_widgetJSONTreeViewerInGetPropertyDetailsTab.show()
+        except:
+            self.JSONlayoutGetPropertyDetails = QtWidgets.QHBoxLayout(self.GetPropertyDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetPropertyDetails.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetJSONTreeViewerInGetPropertyDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetPropertyDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetPropertyDetails.addWidget(self.sub_widgetJSONTreeViewerInGetPropertyDetailsTab)
+
+    #Render the JSON Tree Viewer in the GetPropertyValueDetails tab
+    def renderJSONTreeViewerInGetPropertyValueDetailsTab(self, dataToBeDisplayed):
+        try:
+            self.JSONlayoutGetPropertyValueDetails.removeWidget(self.sub_widgetJSONTreeViewerInGetPropertyValueDetailsTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetJSONTreeViewerInGetPropertyValueDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetPropertyValueDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetPropertyValueDetails.addWidget(self.sub_widgetJSONTreeViewerInGetPropertyValueDetailsTab)
+            self.sub_widgetJSONTreeViewerInGetPropertyValueDetailsTab.show()
+        except:
+            self.JSONlayoutGetPropertyValueDetails = QtWidgets.QHBoxLayout(self.GetPropertyValueDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetPropertyValueDetails.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetJSONTreeViewerInGetPropertyValueDetailsTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.GetPropertyValueDetails_JSONViewerHolder_widget)
+            self.JSONlayoutGetPropertyValueDetails.addWidget(self.sub_widgetJSONTreeViewerInGetPropertyValueDetailsTab)
+
+    ################################## Render Checkable ComboBox in tabs
     #Render the Checkable ComboBox in the OpenSearch tab
     def renderCheckableComboBoxInOpenSearchTab(self, dataToBeDisplayed):
         #dataToBeDisplayed: 1D list

@@ -120,6 +120,7 @@ class JsonView(QtWidgets.QWidget):
         # Text box
         self.find_box = QtWidgets.QLineEdit()
         self.find_box.returnPressed.connect(self.find_button_clicked)
+        self.find_box.setPlaceholderText("Insert string here. Case sensitive")
 
         # Find Button
         find_button = QtWidgets.QPushButton("Find")
