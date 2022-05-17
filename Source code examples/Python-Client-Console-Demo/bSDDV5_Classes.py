@@ -24,6 +24,8 @@ Resource_DomainClassificationTree = "Domain/v2/Classifications"
 Resource_TextSearch_Open = 'TextSearchListOpen/v5'
 Resource_Material_Details = 'Material/v1'
 Resource_List_Material_Domain = 'Material/SearchOpen/preview'
+Resource_Property_Details = 'Property/v2'
+Resource_PropertyValue_Details = 'PropertyValue/v1'
 
 class TObject():
     name = ''
@@ -702,6 +704,83 @@ class TPostman():
 
       return NbRes, Response, request_status
 
+    #----------------------------------------------------------------------------------------------------
+    # Make a search to get the details of a given Property  (CUSTOM MADE) - /api/Property/v2: 
+    #----------------------------------------------------------------------------------------------------
+
+    def get_Property_Details(self, _namespaceURI, _languageCode, _SaveResult):
+      # params of the request
+      payload = dict()
+      payload["namespaceUri"] = _namespaceURI #A list of strings. Namespace URI of the property
+      payload["languageCode"] = _languageCode #A list of strings
+      
+      Response, request_status = self.get(Resource_Property_Details, payload)
+      
+      #TODO: Implement NbRes for this method
+      #NbRes = Response["numberOfClassificationsFound"]
+      NbRes=1
+      '''
+      for item in Response['domains']: #in this case we should have just 1 !
+        ReadDomain = self.GetDomainFromURI(item['namespaceUri']) 
+        for item2 in item["classifications"]:
+          NewClass = TClassification()
+          NewClass.FillValuesFromJSON(item2)
+          ReadDomain.Classes.append(NewClass)
+          #If details are required, a request is launched for each one
+          if _Get_Details:
+                payloadClass = dict()
+                payloadClass["namespaceUri"] = NewClass.namespaceUri
+                payloadClass["languageCode"] = _LanguageCode
+                payloadClass["includeChildClassificationReferences"] = False #we don't ask for the hierarchy we just want properties
+                mResponse = self.get(Resource_Classification, payloadClass)
+                NewClass.Load_Details(mResponse)
+      '''
+      if _SaveResult:
+        #TODO: Need to implement a way to save the Response data
+        #Save the classes informations to a csv    
+        #ReadDomain.SaveToCSV();
+        True
+
+      return NbRes, Response, request_status
+
+    #----------------------------------------------------------------------------------------------------
+    # Make a search to get the details of a Property value (CUSTOM MADE) - /api/PropertyValue/v1: 
+    #----------------------------------------------------------------------------------------------------
+
+    def get_PropertyValue_Details(self, _namespaceURI, _languageCode, _SaveResult):
+      # params of the request
+      payload = dict()
+      payload["namespaceUri"] = _namespaceURI #A list of strings. Namespace URI of the property
+      payload["languageCode"] = _languageCode #A list of strings
+      
+      Response, request_status = self.get(Resource_PropertyValue_Details, payload)
+      
+      #TODO: Implement NbRes for this method
+      #NbRes = Response["numberOfClassificationsFound"]
+      NbRes=1
+      '''
+      for item in Response['domains']: #in this case we should have just 1 !
+        ReadDomain = self.GetDomainFromURI(item['namespaceUri']) 
+        for item2 in item["classifications"]:
+          NewClass = TClassification()
+          NewClass.FillValuesFromJSON(item2)
+          ReadDomain.Classes.append(NewClass)
+          #If details are required, a request is launched for each one
+          if _Get_Details:
+                payloadClass = dict()
+                payloadClass["namespaceUri"] = NewClass.namespaceUri
+                payloadClass["languageCode"] = _LanguageCode
+                payloadClass["includeChildClassificationReferences"] = False #we don't ask for the hierarchy we just want properties
+                mResponse = self.get(Resource_Classification, payloadClass)
+                NewClass.Load_Details(mResponse)
+      '''
+      if _SaveResult:
+        #TODO: Need to implement a way to save the Response data
+        #Save the classes informations to a csv    
+        #ReadDomain.SaveToCSV();
+        True
+
+      return NbRes, Response, request_status
     #----------------------------------------------------------------------------------------------------
     #  Request a file with an export of a domain (CUSTOM MADE) - /api/RequestExportFile/preview: 
     #----------------------------------------------------------------------------------------------------

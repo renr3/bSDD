@@ -94,4 +94,7 @@ Get_Classification_Properties() # Get the properties for a given classification
 #NbRes, Response, request_status = bsdd.get_Material_Details("http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/AL--", "", False, False)
 #NbRes, Response, request_status = bsdd.get_List_Material_Domain("http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1", "", "", False)
 
+NbRes, Response, request_status = bsdd.get_Property_Details("http://identifier.buildingsmart.org/uri/buildingsmart/ifc-4.3/prop/ConcreteCover","")
+NbRes, Response, request_status = bsdd.get_PropertyValue_Details("http://identifier.buildingsmart.org/uri/buildingsmart/ifc-4.3/prop/ConcreteCover","")
+
 print(Response)

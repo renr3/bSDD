@@ -34,7 +34,8 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.renderCheckableComboBoxInTab(self.OpenSearch_CheckComboBoxHolder_widget, ["teste","teste"])
         self.renderJSONTreeViewerInGetDomainTab(dict())
         self.renderJSONTreeViewerInOpenSearchTab(dict())
-        self.renderCheckableComboBoxInOpenSearchTab(["No information retrieved yet"]) 
+        self.renderCheckableComboBoxInOpenSearchTab(["No information retrieved yet"])
+        self.renderCheckableComboBoxInOpenSearchClassificationTab(["No information retrieved yet"]) 
 
         # "Connect to bSDD" panel
         self.connect_pushButton.clicked.connect(self.connectToBSDD)
@@ -125,7 +126,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sub_widgetJSONTreeViewerInOpenSearchTab = jsonTreeViewer.JsonView(dataToBeDisplayed, "",self.OpenSearch_JSONViewerHolder_widget)
             self.JSONlayoutOpenSearch.addWidget(self.sub_widgetJSONTreeViewerInOpenSearchTab)
 
-    #Render the Checkable ComboBox in the tab indicated
+    #Render the Checkable ComboBox in the OpenSearch tab
     def renderCheckableComboBoxInOpenSearchTab(self, dataToBeDisplayed):
         #dataToBeDisplayed: 1D list
         try:
@@ -144,17 +145,92 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.checkableOpenSearchlayout.addWidget(self.sub_widgetCheckableComboBoxInOpenSearchTab)
             self.sub_widgetCheckableComboBoxInOpenSearchTab.show()
 
+    #Render the Checkable ComboBox in the OpenSearchClassification tab
+    def renderCheckableComboBoxInOpenSearchClassificationTab(self, dataToBeDisplayed):
+        #dataToBeDisplayed: 1D list
+        try:
+            self.checkableOpenSearchClassificationslayout.removeWidget(self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab)
+            #self.sub_widget.deleteLater()
+            #self.sub_widget = None
+            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab = CheckableComboBox(self.OpenSearchClassifications_CheckComboBoxHolder_widget)
+            self.checkableOpenSearchClassificationslayout.addWidget(self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab)
+            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.addItems(dataToBeDisplayed)
+            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.show()
+        except:
+            self.checkableOpenSearchClassificationslayout = QtWidgets.QHBoxLayout(self.OpenSearchClassifications_CheckComboBoxHolder_widget)
+            self.checkableOpenSearchClassificationslayout.setContentsMargins(0, 0, 0, 0)
+            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab = CheckableComboBox(self.OpenSearchClassifications_CheckComboBoxHolder_widget)
+            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.addItems(dataToBeDisplayed)
+            self.checkableOpenSearchClassificationslayout.addWidget(self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab)
+            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.show()
+
     #Signal that is called when Connect Button is clicked: it allows login to bSDD server, so the RESTful API can be used
     def connectToBSDD(self):
         bsdd.Authorize() #login to bsdd api
         #TODO: If success (implement this verification), get all general information
         self.getGeneralInformation()
-        #TODO: If success in getting general information (implement this), populate the first combo box from the search tab "Get a Domain"
-        #self.GetDomain_DomainURI_comboBox.addItems([item.name + " v." + item.version for item in bsdd.Domains])
-        #self.GetDomain_DataStructure_comboBox.addItems(["Hierarquic","Plain list"])
+        #TODO: If success connection, unlock all search buttons. They must be locked at first
+
+        #Populate all comboBoxes and fields with relevant information
+        #GetDomain tab
         self.GetDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
         self.GetDomain_DataStructure_comboBox.addItems(["true","false"])
+
+        #OpenSearch tab
         self.renderCheckableComboBoxInOpenSearchTab([item.namespaceUri for item in bsdd.Domains])  
+        self.OpenSearch_Filter_comboBox.addItems(["All","Properties","Classifications"])
+
+        #GetClasificationDetails tab
+        self.GetClassificationDetails_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
+        self.GetClassificationDetails_DataStructure_comboBox.setMaxVisibleItems(5)
+        self.GetClassificationDetails_DataStructure_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetClassificationDetails_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.GetClassificationDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+
+        #GetListMaterialDomain tab
+        self.GetListMaterialDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
+        self.GetListMaterialDomain_DataStructure_comboBox.setMaxVisibleItems(5)
+        self.GetListMaterialDomain_DataStructure_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+
+        #GetMaterialDetails tab
+        self.GetMaterialDetails_DataStructure_comboBox.setMaxVisibleItems(5)
+        self.GetMaterialDetails_DataStructure_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.GetMaterialDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+        self.GetMaterialDetails_DataStructure_comboBox_2.addItems(["true", "false"])
+
+        #GetPropertyDetails tab
+        self.GetPropertyDetails_DataStructure_comboBox.setMaxVisibleItems(5)
+        self.GetPropertyDetails_DataStructure_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.GetPropertyDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+
+        #GetPropertyValueDetails tab
+        self.GetPropertyValueDetails_DataStructure_comboBox.setMaxVisibleItems(5)
+        self.GetPropertyValueDetails_DataStructure_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.GetPropertyValueDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+
+        #OpenSearchClassifications tab
+        self.OpenSearchClassifications_Filter_comboBox.setMaxVisibleItems(5)
+        self.OpenSearchClassifications_Filter_comboBox.setMaxCount(len(bsdd.Languages))
+        #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
+        #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
+        self.OpenSearchClassifications_Filter_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+        self.GetListMaterialDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
+        self.renderCheckableComboBoxInOpenSearchClassificationTab([item.namespaceUri for item in bsdd.Domains]) 
+
+
+
+
+
 
     #Signal that is called to get general information available on bSDD API
     def getGeneralInformation(self):
@@ -208,7 +284,6 @@ class JSONViewer(QtWidgets.QMainWindow):
         visualization=self.unpackClassAttributesForVisualization(dataToBeShown)
         self.json_viewer = jsonTreeViewer.JsonViewer(visualization)
         self.json_viewer.show()
-
 class saveDialog(QtWidgets.QWidget):
     #Save file dialog taken from https://pythonspot.com/pyqt5-file-dialog/
     def __init__(self):
@@ -229,7 +304,6 @@ class saveDialog(QtWidgets.QWidget):
         return selectedFilePath   
     def getSaveFilePath(self):
         return self.selectedFilePath
-
 class CheckableComboBox(QtWidgets.QComboBox):
     #Obtained from https://gis.stackexchange.com/questions/350148/qcombobox-multiple-selection-pyqt5
     # Subclass Delegate to increase item height
