@@ -41,7 +41,6 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.renderJSONTreeViewerInGetPropertyDetailsTab(dict())
         self.renderJSONTreeViewerInGetPropertyValueDetailsTab(dict())
         self.renderCheckableComboBoxInOpenSearchTab(["No information retrieved yet"])
-        self.renderCheckableComboBoxInOpenSearchClassificationTab(["No information retrieved yet"]) 
 
         # "Connect to bSDD" panel
         self.connect_pushButton.clicked.connect(self.connectToBSDD)
@@ -62,6 +61,11 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.OpenSearch_Search_pushButton.clicked.connect(lambda: self.searchButtonOpenSearchTab())
         self.OpenSearch_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.OpenSearch_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+
+        # OpenSearchClassifications tab buttons
+        self.OpenSearchClassifications_Search_pushButton.clicked.connect(lambda: self.searchButtonOpenSearchClassificationsTab())
+        self.OpenSearchClassifications_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.OpenSearchClassifications_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
     #Signal that is called when Search button on "Get a Domain" panel is clicked: it performs the querry specified
     def searchButtonDomainTab(self):
@@ -82,7 +86,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetDomainTab(dict())
 
-    #Signal that is called when Search button on "Open search in all bSDD" panel is clicked: it performs the querry specified
+    #Signal that is called when Search button on OpenSearch tab is clicked: it performs the querry specified
     def searchButtonOpenSearchTab(self):
         if str(self.OpenSearch_SearchTextString_lineEdit.text())=="":
             #There are no inputs in the search string holder, so do nothing
@@ -103,6 +107,28 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenSearch_QuerryStatusResult_label.setText("Status code unknown: Failure")
                 self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchTab(dict())
+
+    #Signal that is called when Search button on OpenSearchClassification tab is clicked: it performs the querry specified
+    def searchButtonOpenSearchClassificationsTab(self):
+        if str(self.OpenSearchClassifications_SearchTextString_lineEdit_2.text())=="":
+            #There are no inputs in the search string holder, so do nothing
+            #TODO: implement an error message
+            pass
+        else:
+            #Perform the search
+            #get_Open_Search(self, _SearchText, _TypeFilter, _FilteringDomainUris, _SaveResult)
+            self.currentResponse=bsdd.get_Open_Search_Classifications(str(self.OpenSearchClassifications_DomainURI_comboBox.currentText()), str(self.OpenSearchClassifications_SearchTextString_lineEdit_2.text()), str(self.OpenSearchClassifications_Filter_comboBox.currentText()), str(self.OpenSearchClassifications_SearchTextString_lineEdit.text()), False)
+            #result=bsdd.GetDomainFromURI(self.GetDomain_DomainURI_comboBox.currentText())
+            if self.currentResponse[2]==200:
+                #200 is the HTML code for a successful query
+                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.renderJSONTreeViewerInOpenSearchClassificationsTab(self.currentResponse[1])
+            else:
+                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
+
 
     ################################## Render JSON Tree Viewer in tabs
     #Render the JSON Tree Viewer in the GetDomain tab
@@ -245,25 +271,6 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.checkableOpenSearchlayout.addWidget(self.sub_widgetCheckableComboBoxInOpenSearchTab)
             self.sub_widgetCheckableComboBoxInOpenSearchTab.show()
 
-    #Render the Checkable ComboBox in the OpenSearchClassification tab
-    def renderCheckableComboBoxInOpenSearchClassificationTab(self, dataToBeDisplayed):
-        #dataToBeDisplayed: 1D list
-        try:
-            self.checkableOpenSearchClassificationslayout.removeWidget(self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab)
-            #self.sub_widget.deleteLater()
-            #self.sub_widget = None
-            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab = CheckableComboBox(self.OpenSearchClassifications_CheckComboBoxHolder_widget)
-            self.checkableOpenSearchClassificationslayout.addWidget(self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab)
-            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.addItems(dataToBeDisplayed)
-            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.show()
-        except:
-            self.checkableOpenSearchClassificationslayout = QtWidgets.QHBoxLayout(self.OpenSearchClassifications_CheckComboBoxHolder_widget)
-            self.checkableOpenSearchClassificationslayout.setContentsMargins(0, 0, 0, 0)
-            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab = CheckableComboBox(self.OpenSearchClassifications_CheckComboBoxHolder_widget)
-            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.addItems(dataToBeDisplayed)
-            self.checkableOpenSearchClassificationslayout.addWidget(self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab)
-            self.sub_widgetCheckableComboBoxInOpenSearchClassificationsTab.show()
-
     #Signal that is called when Connect Button is clicked: it allows login to bSDD server, so the RESTful API can be used
     def connectToBSDD(self):
         bsdd.Authorize() #login to bsdd api
@@ -291,8 +298,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.OpenSearchClassifications_Filter_comboBox.addItems([item.isoCode for item in bsdd.Languages])
-        self.GetListMaterialDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
-        self.renderCheckableComboBoxInOpenSearchClassificationTab([item.namespaceUri for item in bsdd.Domains]) 
+        self.OpenSearchClassifications_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains]) 
         self.OpenSearchClassifications_SearchTextString_lineEdit_2.setPlaceholderText("ex.: window. Case and accent insensitive")
         self.OpenSearchClassifications_SearchTextString_lineEdit.setPlaceholderText("ex.: IfcDoor. The official IFC entity name to filter on (case sensitive) ")
 

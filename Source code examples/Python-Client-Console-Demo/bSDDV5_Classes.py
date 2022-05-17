@@ -781,6 +781,52 @@ class TPostman():
         True
 
       return NbRes, Response, request_status
+
+    #----------------------------------------------------------------------------------------------------
+    # Make open search about classifications - /api/SearchList/v2
+    #----------------------------------------------------------------------------------------------------
+
+    def get_Open_Search_Classifications(self, _DomainURI, _SearchText, _LanguageCode, _RelatedIfcEntity, _SaveResult):
+      
+      # params of the request
+      payload = dict()
+      payload["DomainNamespaceUri"] = _DomainURI
+      payload["SearchText"] = _SearchText
+      #Language code for the request ; EN for Internation English
+      payload["LanguageCode"] = _LanguageCode
+      payload["RelatedIfcEntity"] = _RelatedIfcEntity
+      
+      Response, request_status = self.get(Resource_Search_Open, payload)
+
+      #TODO: Implement NbRes for this method
+      #NbRes = Response["numberOfClassificationsFound"]
+      NbRes = 1
+      '''
+      for item in Response['domains']: #in this case we should have just 1 ! (Since we informed a URI from a specific domain)
+        ReadDomain = self.GetDomainFromURI(item['namespaceUri']) 
+        for item2 in item["classifications"]:
+          NewClass = TClassification()
+          NewClass.FillValuesFromJSON(item2)
+          ReadDomain.Classes.append(NewClass)
+
+          #If details are required, a request is launched for each class
+          if _Get_Details:
+                payloadClass = dict()
+                payloadClass["namespaceUri"] = NewClass.namespaceUri
+                payloadClass["languageCode"] = _LanguageCode
+                payloadClass["includeChildClassificationReferences"] = False #we don't ask for the hierarchy we just want properties
+                mResponse = self.get(Resource_Classification, payloadClass)
+                NewClass.Load_Details(mResponse)
+      '''
+
+      if _SaveResult:
+        #TODO: Need to implement a way to save the Response data
+        #Save the classes informations to a csv    
+        #ReadDomain.SaveToCSV();
+        True
+
+      return NbRes, Response, request_status
+
     #----------------------------------------------------------------------------------------------------
     #  Request a file with an export of a domain (CUSTOM MADE) - /api/RequestExportFile/preview: 
     #----------------------------------------------------------------------------------------------------
