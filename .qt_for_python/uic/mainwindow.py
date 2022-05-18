@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\bSDD_SimpleGUI\mainwindow.ui'
+# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.2.3
 #
@@ -547,11 +547,11 @@ class Ui_MainWindow(object):
         self.GetMaterialDetails_DataStructure_comboBox.setMaxCount(2)
         self.GetMaterialDetails_DataStructure_comboBox.setObjectName("GetMaterialDetails_DataStructure_comboBox")
         self.gridLayout_6.addWidget(self.GetMaterialDetails_DataStructure_comboBox, 1, 1, 1, 1)
-        self.GetListMaterialDetails_SearchTextString_lineEdit = QtWidgets.QLineEdit(self.GetMaterialDetails_tab)
-        self.GetListMaterialDetails_SearchTextString_lineEdit.setMinimumSize(QtCore.QSize(500, 20))
-        self.GetListMaterialDetails_SearchTextString_lineEdit.setMaximumSize(QtCore.QSize(50, 25))
-        self.GetListMaterialDetails_SearchTextString_lineEdit.setObjectName("GetListMaterialDetails_SearchTextString_lineEdit")
-        self.gridLayout_6.addWidget(self.GetListMaterialDetails_SearchTextString_lineEdit, 0, 1, 1, 3)
+        self.GetMaterialDetails_SearchTextString_lineEdit = QtWidgets.QLineEdit(self.GetMaterialDetails_tab)
+        self.GetMaterialDetails_SearchTextString_lineEdit.setMinimumSize(QtCore.QSize(500, 20))
+        self.GetMaterialDetails_SearchTextString_lineEdit.setMaximumSize(QtCore.QSize(50, 25))
+        self.GetMaterialDetails_SearchTextString_lineEdit.setObjectName("GetMaterialDetails_SearchTextString_lineEdit")
+        self.gridLayout_6.addWidget(self.GetMaterialDetails_SearchTextString_lineEdit, 0, 1, 1, 3)
         self.GetMaterialDetails_Search_pushButton = QtWidgets.QPushButton(self.GetMaterialDetails_tab)
         self.GetMaterialDetails_Search_pushButton.setMinimumSize(QtCore.QSize(80, 30))
         self.GetMaterialDetails_Search_pushButton.setMaximumSize(QtCore.QSize(80, 30))
@@ -775,7 +775,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menubSDD_SimpleGUI.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(5)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

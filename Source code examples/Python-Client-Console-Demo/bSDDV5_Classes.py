@@ -631,7 +631,7 @@ class TPostman():
     def get_Material_Details(self, _namespaceURI, _languageCode, _includeChildMaterialReferences, _SaveResult):
       # params of the request
       payload = dict()
-      payload["namespaceURI"] = _namespaceURI #A list of strings
+      payload["namespaceUri"] = _namespaceURI #A list of strings
       payload["languageCode"] = _languageCode #It is a string
       payload["includeChildMaterialReferences"] = _includeChildMaterialReferences #A list of strings
       

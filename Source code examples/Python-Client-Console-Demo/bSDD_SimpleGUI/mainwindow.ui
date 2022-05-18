@@ -195,7 +195,7 @@
        <number>-1</number>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="GetDomain_tab">
        <property name="minimumSize">
@@ -1734,7 +1734,7 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="3">
-           <widget class="QLineEdit" name="GetListMaterialDetails_SearchTextString_lineEdit">
+           <widget class="QLineEdit" name="GetMaterialDetails_SearchTextString_lineEdit">
             <property name="minimumSize">
              <size>
               <width>500</width>

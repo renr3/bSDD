@@ -54,6 +54,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # GetDomain tab buttons
         self.GetDomain_Search_pushButton.clicked.connect(lambda: self.searchButtonDomainTab())
+        #TODO: self.currentResponse in these two functions on all tabs is not ideal. Because if you change tabs and click on those buttons, it will use data from the previous querry from possibly another tab. It would be much better to make sure that this will only use query from their respective tab
         self.GetDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
 
@@ -76,6 +77,11 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.GetListMaterialDomain_Search_pushButton.clicked.connect(lambda: self.searchButtonGetListMaterialDomainTab())
         self.GetListMaterialDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetListMaterialDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+
+        # GetMaterialDetails tab buttons
+        self.GetMaterialDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetMaterialDetailsTab())
+        self.GetMaterialDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.GetMaterialDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
     ################################## Definition of Search buttons on each tab
 
@@ -141,7 +147,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
 
-    #Signal that is called when Search button on GetClassificationDetailsTab tab is clicked: it performs the querry specified
+    #Signal that is called when Search button on GetClassificationDetails tab is clicked: it performs the querry specified
     def searchButtonGetClassificationDetailsTab(self):
         if str(self.GetClassificationDetails_SearchTextString_lineEdit.text())=="":
             #There are no inputs in the search string holder, so do nothing
@@ -160,7 +166,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetClassificationDetailsTab(dict())
 
-    #Signal that is called when Search button on GetListMaterialDomainTab tab is clicked: it performs the querry specified
+    #Signal that is called when Search button on GetListMaterialDomain tab is clicked: it performs the querry specified
     def searchButtonGetListMaterialDomainTab(self):
         if str(self.GetListMaterialDomain_SearchTextString_lineEdit.text())=="":
             #There are no inputs in the search string holder, so do nothing
@@ -178,6 +184,26 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetListMaterialDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.GetListMaterialDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetListMaterialDomainTab(dict())
+
+    #Signal that is called when Search button on GetMaterialDetails tab tab is clicked: it performs the querry specified
+    def searchButtonGetMaterialDetailsTab(self):
+        if str(self.GetMaterialDetails_SearchTextString_lineEdit.text())=="":
+            #There are no inputs in the search string holder, so do nothing
+            #TODO: implement an error message here
+            pass
+        else:
+            #Perform the search
+            self.currentResponse=bsdd.get_Material_Details(str(self.GetMaterialDetails_SearchTextString_lineEdit.text()), str(self.GetMaterialDetails_DataStructure_comboBox.currentText()), str(self.GetMaterialDetails_DataStructure_comboBox_2.currentText()), False)
+            if self.currentResponse[2]==200:
+                #200 is the HTML code for a successful query
+                self.GetMaterialDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetMaterialDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.renderJSONTreeViewerInGetMaterialDetailsTab(self.currentResponse[1])
+            else:
+                self.GetMaterialDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetMaterialDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.renderJSONTreeViewerInGetMaterialDetailsTab(dict())
+
 
     ################################## Render JSON Tree Viewer in tabs
     #Render the JSON Tree Viewer in the GetDomain tab
@@ -375,7 +401,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetMaterialDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
         self.GetMaterialDetails_DataStructure_comboBox_2.addItems(["true", "false"])
-        self.GetListMaterialDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the material")
+        self.GetMaterialDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the material")
 
         #GetPropertyDetails tab
         self.GetPropertyDetails_DataStructure_comboBox.setMaxVisibleItems(5)
@@ -391,7 +417,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetPropertyValueDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
-        self.GetPropertyValueDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the property value")
+        self.GetPropertyValueDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the property value, e.g. http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/CT--")
 
     #Signal that is called to get general information available on bSDD API
     def getGeneralInformation(self):
