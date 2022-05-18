@@ -82,6 +82,11 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.GetMaterialDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetMaterialDetailsTab())
         self.GetMaterialDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetMaterialDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+
+        # GetPropertyDetails tab buttons
+        self.GetPropertyDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetPropertyDetailsTab())
+        self.GetPropertyDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.GetPropertyDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
     ################################## Definition of Search buttons on each tab
 
@@ -203,6 +208,25 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetMaterialDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.GetMaterialDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetMaterialDetailsTab(dict())
+
+    #Signal that is called when Search button on GetPropertyDetails tab tab is clicked: it performs the querry specified
+    def searchButtonGetPropertyDetailsTab(self):
+        if str(self.GetPropertyDetails_SearchTextString_lineEdit.text())=="":
+            #There are no inputs in the search string holder, so do nothing
+            #TODO: implement an error message here
+            pass
+        else:
+            #Perform the search
+            self.currentResponse=bsdd.get_Property_Details(str(self.GetPropertyDetails_SearchTextString_lineEdit.text()), str(self.GetPropertyDetails_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[2]==200:
+                #200 is the HTML code for a successful query
+                self.GetPropertyDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetPropertyDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.renderJSONTreeViewerInGetPropertyDetailsTab(self.currentResponse[1])
+            else:
+                self.GetPropertyDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetPropertyDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.renderJSONTreeViewerInGetPropertyDetailsTab(dict())
 
 
     ################################## Render JSON Tree Viewer in tabs

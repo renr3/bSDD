@@ -195,7 +195,7 @@
        <number>-1</number>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="GetDomain_tab">
        <property name="minimumSize">

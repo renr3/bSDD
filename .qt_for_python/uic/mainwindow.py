@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\mainwindow.ui'
+# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\bSDD_SimpleGUI\mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.2.3
 #
@@ -775,7 +775,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menubSDD_SimpleGUI.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(6)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
