@@ -71,6 +71,12 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.GetClassificationDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetClassificationDetailsTab())
         self.GetClassificationDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetClassificationDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+
+        # GetListMaterialDomain tab buttons
+        self.GetListMaterialDomain_Search_pushButton.clicked.connect(lambda: self.searchButtonGetListMaterialDomainTab())
+        self.GetListMaterialDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.GetListMaterialDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+    
     
     #Signal that is called when Search button on "Get a Domain" panel is clicked: it performs the querry specified
     def searchButtonDomainTab(self):
@@ -134,7 +140,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
 
-    #Signal that is called when Search button on OpenSearchClassification tab is clicked: it performs the querry specified
+    #Signal that is called when Search button on GetClassificationDetailsTab tab is clicked: it performs the querry specified
     def searchButtonGetClassificationDetailsTab(self):
         if str(self.GetClassificationDetails_SearchTextString_lineEdit.text())=="":
             #There are no inputs in the search string holder, so do nothing
@@ -152,6 +158,25 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetClassificationDetails_QuerryStatusResult_label.setText("Status code unknown: Failure")
                 self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetClassificationDetailsTab(dict())
+
+    #Signal that is called when Search button on GetListMaterialDomainTab tab is clicked: it performs the querry specified
+    def searchButtonGetListMaterialDomainTab(self):
+        if str(self.GetListMaterialDomain_SearchTextString_lineEdit.text())=="":
+            #There are no inputs in the search string holder, so do nothing
+            #TODO: implement an error message
+            pass
+        else:
+            #Perform the search
+            self.currentResponse=bsdd.get_List_Material_Domain(str(self.GetListMaterialDomain_DomainURI_comboBox.currentText()), str(self.GetListMaterialDomain_SearchTextString_lineEdit.text()), str(self.GetListMaterialDomain_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[2]==200:
+                #200 is the HTML code for a successful query
+                self.GetListMaterialDomain_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetListMaterialDomain_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.renderJSONTreeViewerInGetListMaterialDomainTab(self.currentResponse[1])
+            else:
+                self.GetListMaterialDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetListMaterialDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.renderJSONTreeViewerInGetListMaterialDomainTab(dict())
 
     ################################## Render JSON Tree Viewer in tabs
     #Render the JSON Tree Viewer in the GetDomain tab

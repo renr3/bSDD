@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\mainwindow.ui'
+# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\bSDD_SimpleGUI\mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.2.3
 #
@@ -217,7 +217,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.OpenSearch_DataStructure_label, 1, 0, 1, 1)
         self.OpenSearch_Search_pushButton = QtWidgets.QPushButton(self.OpenSearch_tab)
         self.OpenSearch_Search_pushButton.setMinimumSize(QtCore.QSize(80, 30))
-        self.Op        self.OpenSearch_Search_pushButton.setMaximumSize(QtCore.QSize(80, 30))
+        self.OpenSearch_Search_pushButton.setMaximumSize(QtCore.QSize(80, 30))
         self.OpenSearch_Search_pushButton.setObjectName("OpenSearch_Search_pushButton")
         self.gridLayout_3.addWidget(self.OpenSearch_Search_pushButton, 4, 0, 1, 1)
         self.OpenSearch_QuerryStatusResult_label = QtWidgets.QLabel(self.OpenSearch_tab)
@@ -304,7 +304,8 @@ class Ui_MainWindow(object):
         self.OpenSearchClassifications_JSONViewerHolder_groupBox.setMinimumSize(QtCore.QSize(597, 301))
         font = QtGui.QFont()
         font.setPointSize(9)
-        font.s        font.se        font.setUnderline(False)
+        font.setBold(False)
+        font.setUnderline(False)
         self.OpenSearchClassifications_JSONViewerHolder_groupBox.setFont(font)
         self.OpenSearchClassifications_JSONViewerHolder_groupBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.OpenSearchClassifications_JSONViewerHolder_groupBox.setObjectName("OpenSearchClassifications_JSONViewerHolder_groupBox")
@@ -388,7 +389,8 @@ class Ui_MainWindow(object):
         self.GetClassificationDetails_QuerryStatusResult_label.setObjectName("GetClassificationDetails_QuerryStatusResult_label")
         self.gridLayout_4.addWidget(self.GetClassificationDetails_QuerryStatusResult_label, 2, 3, 1, 1)
         self.GetClassificationDetails_JSONViewerHolder_groupBox = QtWidgets.QGroupBox(self.widget)
-        self.GetClassificationDetails_JSONViewerHolder_groupBox.setMinimumSize(QtCore.QSi        font = QtGui.QFont()
+        self.GetClassificationDetails_JSONViewerHolder_groupBox.setMinimumSize(QtCore.QSize(597, 301))
+        font = QtGui.QFont()
         font.setPointSize(9)
         font.setBold(False)
         font.setUnderline(False)
@@ -476,7 +478,7 @@ class Ui_MainWindow(object):
         self.GetListMaterialDomain_DomainURI_label.setMinimumSize(QtCore.QSize(85, 30))
         self.GetListMaterialDomain_DomainURI_label.setMaximumSize(QtCore.QSize(85, 30))
         self.GetListMaterialDomain_DomainURI_label.setObjectName("GetListMaterialDomain_DomainURI_label")
-        self.gr        self.gridLayout_5.addWidget(self.GetListMaterialDomain_DomainURI_label, 0, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.GetListMaterialDomain_DomainURI_label, 0, 0, 1, 1)
         self.GetListMaterialDomain_SearchTextString_lineEdit = QtWidgets.QLineEdit(self.GetListMaterialDomain_tab)
         self.GetListMaterialDomain_SearchTextString_lineEdit.setMinimumSize(QtCore.QSize(200, 20))
         self.GetListMaterialDomain_SearchTextString_lineEdit.setMaximumSize(QtCore.QSize(300, 28))
@@ -563,7 +565,8 @@ class Ui_MainWindow(object):
         self.GetMaterialDetails_OpenInNewWindow_pushButton = QtWidgets.QPushButton(self.GetMaterialDetails_tab)
         self.GetMaterialDetails_OpenInNewWindow_pushButton.setMinimumSize(QtCore.QSize(150, 25))
         self.GetMaterialDetails_OpenInNewWindow_pushButton.setMaximumSize(QtCore.QSize(150, 25))
-        self.GetMaterialDetails_OpenInNewWindow_pushButton.setObjectName("GetMaterialDetails_OpenInNewWindow        self.gridLayout_6.addWidget(self.GetMaterialDetails_OpenInNewWindow_pushButton, 4, 0, 1, 2, QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.GetMaterialDetails_OpenInNewWindow_pushButton.setObjectName("GetMaterialDetails_OpenInNewWindow_pushButton")
+        self.gridLayout_6.addWidget(self.GetMaterialDetails_OpenInNewWindow_pushButton, 4, 0, 1, 2, QtCore.Qt.AlignmentFlag.AlignLeft)
         self.GetMaterialDetails_JSONViewerHolder_groupBox = QtWidgets.QGroupBox(self.GetMaterialDetails_tab)
         self.GetMaterialDetails_JSONViewerHolder_groupBox.setMinimumSize(QtCore.QSize(597, 301))
         font = QtGui.QFont()
@@ -772,7 +775,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menubSDD_SimpleGUI.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -877,4 +880,3 @@ class Ui_MainWindow(object):
         self.GetPropertyValueDetails_SaveTo_pushButton.setText(_translate("MainWindow", "Save to..."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.GetPropertyValueDetails_tab), _translate("MainWindow", "Get Property Value details"))
         self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.GetPropertyValueDetails_tab), _translate("MainWindow", "<html><head/><body><p>Retrieves all the details of a Property Value specified in the URI. User can choose the Language of the ouput. It performs the method &quot;<span style=\" font-weight:700;\">/api/PropertyValue/v1</span>&quot;</p></body></html>"))
-dy></html>"))
