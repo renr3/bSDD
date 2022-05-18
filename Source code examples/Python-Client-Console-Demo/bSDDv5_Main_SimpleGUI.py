@@ -66,6 +66,11 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.OpenSearchClassifications_Search_pushButton.clicked.connect(lambda: self.searchButtonOpenSearchClassificationsTab())
         self.OpenSearchClassifications_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.OpenSearchClassifications_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+
+        # GetClassificationDetails tab buttons
+        self.GetClassificationDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetClassificationDetailsTab())
+        self.GetClassificationDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.GetClassificationDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
     #Signal that is called when Search button on "Get a Domain" panel is clicked: it performs the querry specified
     def searchButtonDomainTab(self):
@@ -129,6 +134,24 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
 
+    #Signal that is called when Search button on OpenSearchClassification tab is clicked: it performs the querry specified
+    def searchButtonGetClassificationDetailsTab(self):
+        if str(self.GetClassificationDetails_SearchTextString_lineEdit.text())=="":
+            #There are no inputs in the search string holder, so do nothing
+            #TODO: implement an error message
+            pass
+        else:
+            #Perform the search
+            self.currentResponse=bsdd.Get_Classification_Properties(str(self.GetClassificationDetails_SearchTextString_lineEdit.text()), str(self.GetClassificationDetails_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[2]==200:
+                #200 is the HTML code for a successful query
+                self.GetClassificationDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.renderJSONTreeViewerInGetClassificationDetailsTab(self.currentResponse[1])
+            else:
+                self.GetClassificationDetails_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.renderJSONTreeViewerInGetClassificationDetailsTab(dict())
 
     ################################## Render JSON Tree Viewer in tabs
     #Render the JSON Tree Viewer in the GetDomain tab
@@ -303,12 +326,12 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.OpenSearchClassifications_SearchTextString_lineEdit.setPlaceholderText("ex.: IfcDoor. The official IFC entity name to filter on (case sensitive) ")
 
         #GetClasificationDetails tab
-        self.GetClassificationDetails_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])
         self.GetClassificationDetails_DataStructure_comboBox.setMaxVisibleItems(5)
         self.GetClassificationDetails_DataStructure_comboBox.setMaxCount(len(bsdd.Languages))
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetClassificationDetails_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetClassificationDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
+        self.GetClassificationDetails_SearchTextString_lineEdit.setPlaceholderText("Namespace URI of the classification, e.g. http://identifier.buildingsmart.org/uri/buildingsmart/ifc-4.3/class/ifcwall")
 
         #GetListMaterialDomain tab
         self.GetListMaterialDomain_DomainURI_comboBox.addItems([item.namespaceUri for item in bsdd.Domains])

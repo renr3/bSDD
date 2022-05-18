@@ -395,7 +395,7 @@ class TPostman():
        if _SaveResult:          
           mClassification.SaveToCSV(_ClassificationName)       
 
-       return NbRes
+       return NbRes, mResponse, request_status #Expanded to return more inputs than originally returned
           
     #----------------------------------------------------------------------------------------------------
     # Retrieve a the classes of a domain linked to an IFC Entity - /api/SearchListOpen/v2
