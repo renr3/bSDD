@@ -87,6 +87,11 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.GetPropertyDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetPropertyDetailsTab())
         self.GetPropertyDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetPropertyDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+
+        # GetPropertyValueDetails tab buttons
+        self.GetPropertyValueDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetPropertyValueDetailsTab())
+        self.GetPropertyValueDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
+        self.GetPropertyValueDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
     ################################## Definition of Search buttons on each tab
 
@@ -227,6 +232,25 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetPropertyDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.GetPropertyDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetPropertyDetailsTab(dict())
+
+    #Signal that is called when Search button on GetPropertyValueDetails tab tab is clicked: it performs the querry specified
+    def searchButtonGetPropertyValueDetailsTab(self):
+        if str(self.GetPropertyValueDetails_SearchTextString_lineEdit.text())=="":
+            #There are no inputs in the search string holder, so do nothing
+            #TODO: implement an error message here
+            pass
+        else:
+            #Perform the search
+            self.currentResponse=bsdd.get_PropertyValue_Details(str(self.GetPropertyValueDetails_SearchTextString_lineEdit.text()), str(self.GetPropertyValueDetails_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[2]==200:
+                #200 is the HTML code for a successful query
+                self.GetPropertyValueDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetPropertyValueDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
+                self.renderJSONTreeViewerInGetPropertyValueDetailsTab(self.currentResponse[1])
+            else:
+                self.GetPropertyValueDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetPropertyValueDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
+                self.renderJSONTreeViewerInGetPropertyValueDetailsTab(dict())
 
 
     ################################## Render JSON Tree Viewer in tabs
@@ -425,7 +449,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetMaterialDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
         self.GetMaterialDetails_DataStructure_comboBox_2.addItems(["true", "false"])
-        self.GetMaterialDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the material")
+        self.GetMaterialDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the material, e.g. http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/CT--")
 
         #GetPropertyDetails tab
         self.GetPropertyDetails_DataStructure_comboBox.setMaxVisibleItems(5)
@@ -441,7 +465,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #TODO: Make fields screen adjustable, so the full item.name+"/"+item.isoCode can be shown here
         #self.GetListMaterialDomain_DataStructure_comboBox.addItems([item.name+"/"+item.isoCode for item in bsdd.Languages])
         self.GetPropertyValueDetails_DataStructure_comboBox.addItems([item.isoCode for item in bsdd.Languages])
-        self.GetPropertyValueDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the property value, e.g. http://identifier.buildingsmart.org/uri/sbe/swedishmaterials-1/class/CT--")
+        self.GetPropertyValueDetails_SearchTextString_lineEdit.setPlaceholderText("ex.: Namespace URI of the property value")
 
     #Signal that is called to get general information available on bSDD API
     def getGeneralInformation(self):
@@ -450,7 +474,6 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         bsdd.get_Languages(False)
         bsdd.get_ReferenceDocuments(False)
         bsdd.get_Units(False)
-        print("Cheguei aqui")
 
     #Signal that is called to show a new window with the JSON Viewer Window
     def displayDataInTreeViewer(self, dataToBeViewed, dataDescriptionLabel):
