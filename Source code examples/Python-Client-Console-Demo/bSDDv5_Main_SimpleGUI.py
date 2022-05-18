@@ -77,7 +77,8 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.GetListMaterialDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
         self.GetListMaterialDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
     
-    
+    ################################## Definition of Search buttons on each tab
+
     #Signal that is called when Search button on "Get a Domain" panel is clicked: it performs the querry specified
     def searchButtonDomainTab(self):
         if str(self.GetDomain_DomainURI_comboBox.currentText())=="" or str(self.GetDomain_DataStructure_comboBox.currentText())=="":
@@ -93,7 +94,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
                 self.renderJSONTreeViewerInGetDomainTab(self.currentResponse[1])
             else:
-                self.GetDomain_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.GetDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetDomainTab(dict())
 
@@ -115,7 +116,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
                 self.renderJSONTreeViewerInOpenSearchTab(self.currentResponse[1])
             else:
-                self.OpenSearch_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.OpenSearch_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchTab(dict())
 
@@ -136,7 +137,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
                 self.renderJSONTreeViewerInOpenSearchClassificationsTab(self.currentResponse[1])
             else:
-                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
 
@@ -155,7 +156,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
                 self.renderJSONTreeViewerInGetClassificationDetailsTab(self.currentResponse[1])
             else:
-                self.GetClassificationDetails_QuerryStatusResult_label.setText("Status code unknown: Failure")
+                self.GetClassificationDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
                 self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetClassificationDetailsTab(dict())
 
