@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\bSDD_SimpleGUI\mainwindow.ui'
+# Form implementation generated from reading ui file 'd:\Documentos\OneDrive\Renan\Engenharia Civil\Desenvolvimentos\bSDD\Source code examples\Python-Client-Console-Demo\mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.2.3
 #
@@ -762,20 +762,28 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.GetPropertyValueDetails_tab, "")
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 663, 25))
         self.menubar.setObjectName("menubar")
         self.menubSDD_SimpleGUI = QtWidgets.QMenu(self.menubar)
         self.menubSDD_SimpleGUI.setTitle("")
         self.menubSDD_SimpleGUI.setObjectName("menubSDD_SimpleGUI")
+        self.menuAbout = QtWidgets.QMenu(self.menubar)
+        self.menuAbout.setObjectName("menuAbout")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.actionlkmlkmklm = QtGui.QAction(MainWindow)
+        self.actionlkmlkmklm.setObjectName("actionlkmlkmklm")
+        self.actionAboutThis = QtGui.QAction(MainWindow)
+        self.actionAboutThis.setObjectName("actionAboutThis")
+        self.menuAbout.addAction(self.actionAboutThis)
         self.menubar.addAction(self.menubSDD_SimpleGUI.menuAction())
+        self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(6)
+        self.tabWidget.setCurrentIndex(7)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -880,3 +888,6 @@ class Ui_MainWindow(object):
         self.GetPropertyValueDetails_SaveTo_pushButton.setText(_translate("MainWindow", "Save to..."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.GetPropertyValueDetails_tab), _translate("MainWindow", "Get Property Value details"))
         self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.GetPropertyValueDetails_tab), _translate("MainWindow", "<html><head/><body><p>Retrieves all the details of a Property Value specified in the URI. User can choose the Language of the ouput. It performs the method &quot;<span style=\" font-weight:700;\">/api/PropertyValue/v1</span>&quot;</p></body></html>"))
+        self.menuAbout.setTitle(_translate("MainWindow", "About"))
+        self.actionlkmlkmklm.setText(_translate("MainWindow", "lkmlkmklm"))
+        self.actionAboutThis.setText(_translate("MainWindow", "About this..."))

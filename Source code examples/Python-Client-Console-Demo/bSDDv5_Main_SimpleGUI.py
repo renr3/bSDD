@@ -4,10 +4,12 @@ from bSDDV5_Classes import TClassification, TCountry, TDomain, TPostman
 import requests
 import msal
 import sys
+import pathlib
 
 #Importing things required by the GUI
 #from Old.mainwindowOld2 import Ui_MainWindow
 from mainwindow import Ui_MainWindow
+from dialog_aboutThis import Ui_aboutThis_Dialog
 from PyQt5 import QtWidgets, QtGui
 from PyQt5 import QtCore
 
@@ -28,7 +30,10 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(mainWindow, self).__init__(parent=parent)
         self.setupUi(self)
-        self.currentResponse=["","",""]
+        self.currentResponse=[["","",""] for items in range(8)]
+
+        #About button on toolbar
+        self.actionAboutThis.triggered.connect(lambda: self.aboutThisDialog())
 
         #Initiate custom widgets not present in the .ui file template
         #self.renderCheckableComboBoxInTab(self.OpenSearch_CheckComboBoxHolder_widget, ["teste","teste"])
@@ -55,43 +60,43 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # GetDomain tab buttons
         self.GetDomain_Search_pushButton.clicked.connect(lambda: self.searchButtonDomainTab())
         #TODO: self.currentResponse in these two functions on all tabs is not ideal. Because if you change tabs and click on those buttons, it will use data from the previous querry from possibly another tab. It would be much better to make sure that this will only use query from their respective tab
-        self.GetDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.GetDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.GetDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[0][1], "Get a Domain query results"))
+        self.GetDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[0][1]))
 
         # OpenSearch tab buttons
         self.OpenSearch_Search_pushButton.clicked.connect(lambda: self.searchButtonOpenSearchTab())
-        self.OpenSearch_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.OpenSearch_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.OpenSearch_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1][1], "Get a Domain query results"))
+        self.OpenSearch_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1][1]))
 
         # OpenSearchClassifications tab buttons
         self.OpenSearchClassifications_Search_pushButton.clicked.connect(lambda: self.searchButtonOpenSearchClassificationsTab())
-        self.OpenSearchClassifications_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.OpenSearchClassifications_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.OpenSearchClassifications_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[2][1], "Get a Domain query results"))
+        self.OpenSearchClassifications_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[2][1]))
 
         # GetClassificationDetails tab buttons
         self.GetClassificationDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetClassificationDetailsTab())
-        self.GetClassificationDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.GetClassificationDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.GetClassificationDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[3][1], "Get a Domain query results"))
+        self.GetClassificationDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[3][1]))
 
         # GetListMaterialDomain tab buttons
         self.GetListMaterialDomain_Search_pushButton.clicked.connect(lambda: self.searchButtonGetListMaterialDomainTab())
-        self.GetListMaterialDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.GetListMaterialDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.GetListMaterialDomain_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[4][1], "Get a Domain query results"))
+        self.GetListMaterialDomain_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[4][1]))
 
         # GetMaterialDetails tab buttons
         self.GetMaterialDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetMaterialDetailsTab())
-        self.GetMaterialDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.GetMaterialDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.GetMaterialDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[5][1], "Get a Domain query results"))
+        self.GetMaterialDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[5][1]))
 
         # GetPropertyDetails tab buttons
         self.GetPropertyDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetPropertyDetailsTab())
-        self.GetPropertyDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.GetPropertyDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.GetPropertyDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[6][1], "Get a Domain query results"))
+        self.GetPropertyDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[6][1]))
 
         # GetPropertyValueDetails tab buttons
         self.GetPropertyValueDetails_Search_pushButton.clicked.connect(lambda: self.searchButtonGetPropertyValueDetailsTab())
-        self.GetPropertyValueDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[1], "Get a Domain query results"))
-        self.GetPropertyValueDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[1]))
+        self.GetPropertyValueDetails_OpenInNewWindow_pushButton.clicked.connect(lambda: self.displayDataInTreeViewer(self.currentResponse[7][1], "Get a Domain query results"))
+        self.GetPropertyValueDetails_SaveTo_pushButton.clicked.connect(lambda: self.saveDataDialog(self.currentResponse[7][1]))
     
     ################################## Definition of Search buttons on each tab
 
@@ -102,15 +107,15 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         else:
             #Perform the search
-            self.currentResponse=bsdd.get_Domain_Classes_Tree(self.GetDomain_DomainURI_comboBox.currentText(), str(self.GetDomain_DataStructure_comboBox.currentText()), False)
+            self.currentResponse[0]=bsdd.get_Domain_Classes_Tree(self.GetDomain_DomainURI_comboBox.currentText(), str(self.GetDomain_DataStructure_comboBox.currentText()), False)
             #result=bsdd.GetDomainFromURI(self.GetDomain_DomainURI_comboBox.currentText())
-            if self.currentResponse[2]==200:
+            if self.currentResponse[0][2]==200:
                 #200 is the HTML code for a successful query
-                self.GetDomain_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetDomain_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[0][2])+": Success")
                 self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInGetDomainTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInGetDomainTab(self.currentResponse[0][1])
             else:
-                self.GetDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[0][2]))
                 self.GetDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetDomainTab(dict())
 
@@ -124,15 +129,15 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #Perform the search
             #get_Open_Search(self, _SearchText, _TypeFilter, _FilteringDomainUris, _SaveResult)
             filteringDomainUris=self.sub_widgetCheckableComboBoxInOpenSearchTab.currentData()
-            self.currentResponse=bsdd.get_TextOpen_Search(str(self.OpenSearch_SearchTextString_lineEdit.text()), str(self.OpenSearch_Filter_comboBox.currentText()), filteringDomainUris, False)
+            self.currentResponse[1]=bsdd.get_TextOpen_Search(str(self.OpenSearch_SearchTextString_lineEdit.text()), str(self.OpenSearch_Filter_comboBox.currentText()), filteringDomainUris, False)
             #result=bsdd.GetDomainFromURI(self.GetDomain_DomainURI_comboBox.currentText())
-            if self.currentResponse[2]==200:
+            if self.currentResponse[1][2]==200:
                 #200 is the HTML code for a successful query
-                self.OpenSearch_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.OpenSearch_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[1][2])+": Success")
                 self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInOpenSearchTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInOpenSearchTab(self.currentResponse[1][1])
             else:
-                self.OpenSearch_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.OpenSearch_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[1][2]))
                 self.OpenSearch_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchTab(dict())
 
@@ -145,15 +150,15 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             #Perform the search
             #get_Open_Search(self, _SearchText, _TypeFilter, _FilteringDomainUris, _SaveResult)
-            self.currentResponse=bsdd.get_Open_Search_Classifications(str(self.OpenSearchClassifications_DomainURI_comboBox.currentText()), str(self.OpenSearchClassifications_SearchTextString_lineEdit_2.text()), str(self.OpenSearchClassifications_Filter_comboBox.currentText()), str(self.OpenSearchClassifications_SearchTextString_lineEdit.text()), False)
+            self.currentResponse[2]=bsdd.get_Open_Search_Classifications(str(self.OpenSearchClassifications_DomainURI_comboBox.currentText()), str(self.OpenSearchClassifications_SearchTextString_lineEdit_2.text()), str(self.OpenSearchClassifications_Filter_comboBox.currentText()), str(self.OpenSearchClassifications_SearchTextString_lineEdit.text()), False)
             #result=bsdd.GetDomainFromURI(self.GetDomain_DomainURI_comboBox.currentText())
-            if self.currentResponse[2]==200:
+            if self.currentResponse[2][2]==200:
                 #200 is the HTML code for a successful query
-                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2][2])+": Success")
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInOpenSearchClassificationsTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInOpenSearchClassificationsTab(self.currentResponse[2][1])
             else:
-                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.OpenSearchClassifications_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2][2]))
                 self.OpenSearchClassifications_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInOpenSearchClassificationsTab(dict())
 
@@ -165,14 +170,14 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         else:
             #Perform the search
-            self.currentResponse=bsdd.Get_Classification_Properties(str(self.GetClassificationDetails_SearchTextString_lineEdit.text()), str(self.GetClassificationDetails_DataStructure_comboBox.currentText()), False)
-            if self.currentResponse[2]==200:
+            self.currentResponse[3]=bsdd.Get_Classification_Properties(str(self.GetClassificationDetails_SearchTextString_lineEdit.text()), str(self.GetClassificationDetails_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[3][2]==200:
                 #200 is the HTML code for a successful query
-                self.GetClassificationDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetClassificationDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[3][2])+": Success")
                 self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInGetClassificationDetailsTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInGetClassificationDetailsTab(self.currentResponse[3][1])
             else:
-                self.GetClassificationDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetClassificationDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[3][2]))
                 self.GetClassificationDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetClassificationDetailsTab(dict())
 
@@ -184,14 +189,14 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         else:
             #Perform the search
-            self.currentResponse=bsdd.get_List_Material_Domain(str(self.GetListMaterialDomain_DomainURI_comboBox.currentText()), str(self.GetListMaterialDomain_SearchTextString_lineEdit.text()), str(self.GetListMaterialDomain_DataStructure_comboBox.currentText()), False)
-            if self.currentResponse[2]==200:
+            self.currentResponse[4]=bsdd.get_List_Material_Domain(str(self.GetListMaterialDomain_DomainURI_comboBox.currentText()), str(self.GetListMaterialDomain_SearchTextString_lineEdit.text()), str(self.GetListMaterialDomain_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[4][2]==200:
                 #200 is the HTML code for a successful query
-                self.GetListMaterialDomain_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetListMaterialDomain_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[4][2])+": Success")
                 self.GetListMaterialDomain_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInGetListMaterialDomainTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInGetListMaterialDomainTab(self.currentResponse[4][1])
             else:
-                self.GetListMaterialDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetListMaterialDomain_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[4][2]))
                 self.GetListMaterialDomain_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetListMaterialDomainTab(dict())
 
@@ -203,14 +208,14 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         else:
             #Perform the search
-            self.currentResponse=bsdd.get_Material_Details(str(self.GetMaterialDetails_SearchTextString_lineEdit.text()), str(self.GetMaterialDetails_DataStructure_comboBox.currentText()), str(self.GetMaterialDetails_DataStructure_comboBox_2.currentText()), False)
-            if self.currentResponse[2]==200:
+            self.currentResponse[5]=bsdd.get_Material_Details(str(self.GetMaterialDetails_SearchTextString_lineEdit.text()), str(self.GetMaterialDetails_DataStructure_comboBox.currentText()), str(self.GetMaterialDetails_DataStructure_comboBox_2.currentText()), False)
+            if self.currentResponse[5][2]==200:
                 #200 is the HTML code for a successful query
-                self.GetMaterialDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetMaterialDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[5][2])+": Success")
                 self.GetMaterialDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInGetMaterialDetailsTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInGetMaterialDetailsTab(self.currentResponse[5][1])
             else:
-                self.GetMaterialDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetMaterialDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[5][2]))
                 self.GetMaterialDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetMaterialDetailsTab(dict())
 
@@ -222,14 +227,14 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         else:
             #Perform the search
-            self.currentResponse=bsdd.get_Property_Details(str(self.GetPropertyDetails_SearchTextString_lineEdit.text()), str(self.GetPropertyDetails_DataStructure_comboBox.currentText()), False)
-            if self.currentResponse[2]==200:
+            self.currentResponse[6]=bsdd.get_Property_Details(str(self.GetPropertyDetails_SearchTextString_lineEdit.text()), str(self.GetPropertyDetails_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[6][2]==200:
                 #200 is the HTML code for a successful query
-                self.GetPropertyDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetPropertyDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[6][2])+": Success")
                 self.GetPropertyDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInGetPropertyDetailsTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInGetPropertyDetailsTab(self.currentResponse[6][1])
             else:
-                self.GetPropertyDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetPropertyDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[6][2]))
                 self.GetPropertyDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetPropertyDetailsTab(dict())
 
@@ -241,14 +246,14 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         else:
             #Perform the search
-            self.currentResponse=bsdd.get_PropertyValue_Details(str(self.GetPropertyValueDetails_SearchTextString_lineEdit.text()), str(self.GetPropertyValueDetails_DataStructure_comboBox.currentText()), False)
-            if self.currentResponse[2]==200:
+            self.currentResponse[7]=bsdd.get_PropertyValue_Details(str(self.GetPropertyValueDetails_SearchTextString_lineEdit.text()), str(self.GetPropertyValueDetails_DataStructure_comboBox.currentText()), False)
+            if self.currentResponse[7][2]==200:
                 #200 is the HTML code for a successful query
-                self.GetPropertyValueDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[2])+": Success")
+                self.GetPropertyValueDetails_QuerryStatusResult_label.setText("Status code "+str(self.currentResponse[7][2])+": Success")
                 self.GetPropertyValueDetails_QuerryStatusResult_label.setStyleSheet("background-color: #8CF585")
-                self.renderJSONTreeViewerInGetPropertyValueDetailsTab(self.currentResponse[1])
+                self.renderJSONTreeViewerInGetPropertyValueDetailsTab(self.currentResponse[7][1])
             else:
-                self.GetPropertyValueDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[2]))
+                self.GetPropertyValueDetails_QuerryStatusResult_label.setText("Error. Status code: " + str(self.currentResponse[7][2]))
                 self.GetPropertyValueDetails_QuerryStatusResult_label.setStyleSheet("background-color: #DE8C8C")
                 self.renderJSONTreeViewerInGetPropertyValueDetailsTab(dict())
 
@@ -493,6 +498,27 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             saveFile = open(saveFilePath, "w")
             saveFile = json.dump(dataToBeSaved, saveFile, indent = 1)
 
+    #Signal that is called when "About this..." action is selected from the Tool Bar
+    def aboutThisDialog(self):
+        #TODO: Implement a About dialog stating information about developer and UMinho
+        aboutThisDialog = QtWidgets.QDialog()
+        aboutThisDialog.ui = Ui_aboutThis_Dialog()
+        aboutThisDialog.ui.setupUi(aboutThisDialog)
+        aboutThisDialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        current_directory = str(pathlib.Path(__file__).parent.absolute())
+        path = current_directory + '/icon/dictionary.png'
+        aboutThisDialog.setWindowIcon(QtGui.QIcon(path))
+        current_directory = str(pathlib.Path(__file__).parent.absolute())
+        path = current_directory + '/icon/EEUM_logo.png'
+        pixmap = QtGui.QPixmap(path)       
+        aboutThisDialog.ui.label_image.setPixmap(pixmap)
+        aboutThisDialog.exec_()
+        aboutThisDialog.show()
+
+# Aditional widgets required by the GUI
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 class JSONViewer(QtWidgets.QMainWindow):
     def __init__(self, dataToBeShown, titleName, parent=None):
         super(JSONViewer, self).__init__() # Call the inherited classes __init__ method
@@ -658,5 +684,11 @@ class CheckableComboBox(QtWidgets.QComboBox):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     mainWin = mainWindow()
+    #Icon attribution: <a href="https://www.flaticon.com/free-icons/dictionary" title="dictionary icons">Dictionary icons created by surang - Flaticon</a>
+    #mainWin.setWindowIcon(QtGui.QIcon("dictionary.png"))
+    current_directory = str(pathlib.Path(__file__).parent.absolute())
+    path = current_directory + '/icon/dictionary.png'
+    mainWin.setWindowIcon(QtGui.QIcon(path))
+    mainWin.tabWidget.setCurrentIndex(0)
     mainWin.show()
     sys.exit(app.exec_())
